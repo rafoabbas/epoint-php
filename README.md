@@ -403,19 +403,6 @@ composer analyse   # Run static analysis
 - Use HTTPS in production
 - Keep your private key secure
 
-## Documentation
-
-For detailed documentation, guides, and advanced usage examples, visit our [GitHub Wiki](https://github.com/rafoabbas/epoint-php/wiki).
-
-**Wiki Contents:**
-- 📚 [Getting Started Guide](https://github.com/rafoabbas/epoint-php/wiki/Getting-Started)
-- 💳 [Payment Methods](https://github.com/rafoabbas/epoint-php/wiki/Payment-Methods)
-- 🔐 [Security & Signature Verification](https://github.com/rafoabbas/epoint-php/wiki/Security)
-- 🔄 [Refunds & Reversals](https://github.com/rafoabbas/epoint-php/wiki/Refunds-and-Reversals)
-- 📱 [Digital Wallets (Apple Pay, Google Pay)](https://github.com/rafoabbas/epoint-php/wiki/Digital-Wallets)
-- 🧪 [Testing Guide](https://github.com/rafoabbas/epoint-php/wiki/Testing)
-- ❓ [FAQ & Troubleshooting](https://github.com/rafoabbas/epoint-php/wiki/FAQ)
-
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md)
