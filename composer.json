@@ -1,0 +1,63 @@
+{
+    "name": "rafoabbas/epoint-php",
+    "description": "Epoint.az Payment Gateway PHP SDK - Online payment integration for Azerbaijan",
+    "keywords": [
+        "epoint",
+        "payment",
+        "gateway",
+        "azerbaijan",
+        "epoint.az",
+        "online-payment",
+        "card-payment",
+        "split-payment",
+        "wallet",
+        "apple-pay",
+        "google-pay"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/rafoabbas/epoint-php",
+    "authors": [
+        {
+            "name": "Rauf Abbaszade",
+            "email": "rafo.abbas@gmail.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/rafoabbas/epoint-php/issues",
+        "source": "https://github.com/rafoabbas/epoint-php"
+    },
+    "require": {
+        "php": "^8.2",
+        "guzzlehttp/guzzle": "^7.0",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0",
+        "mockery/mockery": "^1.6",
+        "phpstan/phpstan": "^2.0",
+        "friendsofphp/php-cs-fixer": "^3.64"
+    },
+    "autoload": {
+        "psr-4": {
+            "Epoint\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Epoint\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test:coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "cs:check": "vendor/bin/php-cs-fixer fix --dry-run --diff",
+        "cs:fix": "vendor/bin/php-cs-fixer fix",
+        "analyse": "vendor/bin/phpstan analyse"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
