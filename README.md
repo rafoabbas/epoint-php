@@ -275,6 +275,88 @@ if ($status['status'] === 'ok') {
 | `heartbeat()` | API health check |
 | `verifyCallback()` | Verify callback signature |
 
+### Working with Response Objects
+
+All API methods return response objects with convenient getter methods and full data access:
+
+```php
+$response = $client->payment()
+    ->amount(100.00)
+    ->orderId('ORDER-123')
+    ->send();
+
+// Use specific getter methods
+$redirectUrl = $response->getRedirectUrl();
+$transaction = $response->getTransaction();
+$isSuccess = $response->isSuccess();
+
+// Or get full response data as array
+$fullData = $response->toArray();
+print_r($fullData);
+
+// Example output:
+// [
+//     'status' => 'success',
+//     'redirect_url' => 'https://epoint.az/payment/...',
+//     'transaction' => 'te001234567',
+//     'message' => 'Payment initiated',
+//     'trace_id' => 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+//     // ... all other response fields
+// ]
+```
+
+**Available methods on response objects:**
+
+```php
+// Common methods (available on most responses)
+$response->isSuccess()          // Check if request was successful
+$response->getStatus()          // Get status: 'success', 'error', 'new', etc.
+$response->getMessage()         // Get response message
+$response->getTraceId()         // Get trace ID for troubleshooting
+$response->toArray()            // Get complete response data as array
+
+// Payment-specific methods
+$response->getRedirectUrl()     // Payment page URL (for payment requests)
+$response->getTransaction()     // Transaction ID
+$response->getAmount()          // Payment amount
+$response->getOrderId()         // Your order ID
+
+// Card-specific methods
+$response->getCardId()          // Saved card ID (for card registration)
+$response->getCardMask()        // Masked card number (e.g., "****1234")
+
+// Widget-specific methods
+$response->getWidgetUrl()       // Apple Pay / Google Pay widget URL
+
+// Status check methods
+$response->getPaymentStatus()   // PaymentStatus enum (NEW, SUCCESS, ERROR)
+```
+
+**Pro tip:** Use `->toArray()` for debugging or logging full API responses:
+
+```php
+$response = $client->payment()->amount(50)->orderId('TEST-001')->send();
+
+// Log full response for debugging
+error_log(print_r($response->toArray(), true));
+
+// Get trace_id for support requests
+$traceId = $response->getTraceId();
+```
+
+**Important:** If you encounter any issues with a payment or API request, always include the `trace_id` when contacting Epoint support. This unique identifier helps them quickly locate and troubleshoot your specific transaction:
+
+```php
+try {
+    $response = $client->payment()->amount(100)->orderId('ORDER-123')->send();
+} catch (\Exception $e) {
+    // Always log trace_id when errors occur
+    $traceId = $response->getTraceId() ?? 'N/A';
+    error_log("Payment failed. Trace ID: {$traceId}. Error: " . $e->getMessage());
+
+    // Include trace_id when reporting issues to Epoint support
+}
+
 ### Enums
 
 ```php

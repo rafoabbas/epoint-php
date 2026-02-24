@@ -62,4 +62,12 @@ abstract class BaseResponse
     {
         return $this->data['code'] ?? null;
     }
+
+    /**
+     * Get trace ID for troubleshooting
+     */
+    public function getTraceId(): ?string
+    {
+        return $this->data['trace_id'] ?? null;
+    }
 }

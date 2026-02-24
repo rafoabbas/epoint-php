@@ -53,7 +53,7 @@
         "test:coverage": "vendor/bin/phpunit --coverage-html coverage",
         "cs:check": "vendor/bin/php-cs-fixer fix --dry-run --diff",
         "cs:fix": "vendor/bin/php-cs-fixer fix",
-        "analyse": "vendor/bin/phpstan analyse"
+        "analyddse": "vendor/bin/phpstan analyse"
     },
     "config": {
         "sort-packages": true
