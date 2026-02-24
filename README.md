@@ -42,8 +42,7 @@ use Epoint\EpointClient;
 
 $client = new EpointClient(
     publicKey: 'i000000001',      // Your merchant public key
-    privateKey: 'your-private-key', // Your merchant private key
-    testMode: true                  // Use test environment
+    privateKey: 'your-private-key'  // Your merchant private key
 );
 ```
 

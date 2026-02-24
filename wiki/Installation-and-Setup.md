@@ -33,20 +33,18 @@ use Epoint\EpointClient;
 
 $client = new EpointClient(
     publicKey: 'i000000001',      // Your merchant public key
-    privateKey: 'your-secret-key', // Your private key (keep secret!)
-    testMode: true                 // true = test environment, false = production
+    privateKey: 'your-secret-key'  // Your private key (keep secret!)
 );
 ```
 
-### Production Setup
+### Using Environment Variables
 
-For production, use environment variables to store credentials securely:
+For better security, use environment variables to store credentials:
 
 ```php
 $client = new EpointClient(
     publicKey: getenv('EPOINT_PUBLIC_KEY'),
-    privateKey: getenv('EPOINT_PRIVATE_KEY'),
-    testMode: false // Production mode
+    privateKey: getenv('EPOINT_PRIVATE_KEY')
 );
 ```
 
@@ -57,7 +55,6 @@ Create a `.env` file in your project root:
 ```env
 EPOINT_PUBLIC_KEY=i000000001
 EPOINT_PRIVATE_KEY=your-actual-private-key
-EPOINT_TEST_MODE=true
 ```
 
 **Important**: Add `.env` to your `.gitignore` file!
@@ -66,19 +63,6 @@ EPOINT_TEST_MODE=true
 .env
 .env.local
 ```
-
-## Test Mode
-
-```php
-// Enable test mode
-$client = new EpointClient(
-    publicKey: 'i000000001',
-    privateKey: 'your-private-key',
-    testMode: true  // Set to false for production
-);
-```
-
-**Note**: Contact Epoint support for test credentials and testing instructions.
 
 ## Verify Installation
 
@@ -93,8 +77,7 @@ use Epoint\EpointClient;
 
 $client = new EpointClient(
     publicKey: 'i000000001',
-    privateKey: 'your-private-key',
-    testMode: true
+    privateKey: 'your-private-key'
 );
 
 // Check API health
@@ -130,10 +113,10 @@ Your backend endpoint to receive payment notifications is configured once in you
 ## Security Best Practices
 
 1. **Never Commit Credentials**: Use environment variables, never hardcode keys
-2. **Use HTTPS**: Always use HTTPS in production for callback URLs
+2. **Use HTTPS**: Always use HTTPS for callback URLs
 3. **Secure Private Key**: Store private key securely, never expose in client-side code
 4. **Rotate Keys**: Periodically rotate your API keys
-5. **Test Mode**: Always test in test mode before going live
+5. **Contact Epoint**: Get test credentials from Epoint support for testing
 
 ## Next Steps
 

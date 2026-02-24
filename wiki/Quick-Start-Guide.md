@@ -20,8 +20,7 @@ use Epoint\Enums\Language;
 
 $client = new EpointClient(
     publicKey: 'i000000001',
-    privateKey: 'your-private-key',
-    testMode: true // Use test mode for development
+    privateKey: 'your-private-key'
 );
 ```
 
@@ -184,8 +183,7 @@ use Epoint\Enums\Language;
 // Initialize client
 $client = new EpointClient(
     publicKey: getenv('EPOINT_PUBLIC_KEY'),
-    privateKey: getenv('EPOINT_PRIVATE_KEY'),
-    testMode: true
+    privateKey: getenv('EPOINT_PRIVATE_KEY')
 );
 
 // Create order

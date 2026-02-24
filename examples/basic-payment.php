@@ -11,7 +11,6 @@ use Epoint\EpointClient;
 $client = new EpointClient(
     publicKey: 'i000000001',      // Replace with your public key
     privateKey: 'your-private-key', // Replace with your private key
-    testMode: true                  // Set to false in production
 );
 
 try {

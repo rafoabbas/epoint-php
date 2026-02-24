@@ -62,8 +62,7 @@ use Epoint\Enums\Currency;
 
 $client = new EpointClient(
     publicKey: 'i000000001',
-    privateKey: 'your-private-key',
-    testMode: true
+    privateKey: 'your-private-key'
 );
 
 $response = $client->payment()

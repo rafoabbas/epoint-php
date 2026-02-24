@@ -16,7 +16,7 @@ git clone "$REPO_URL" "$TEMP_DIR" 2>/dev/null || {
     echo ""
     echo "Wiki repo could not be cloned."
     echo "Please create the first wiki page manually on GitHub:"
-    echo "  https://github.com/rafoabbas/api-docs/wiki/_new"
+    echo "  https://github.com/rafoabbas/epoint-php/wiki/_new"
     echo ""
     echo "After creating the first page, run this script again."
     exit 1

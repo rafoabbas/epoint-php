@@ -10,7 +10,6 @@ use Epoint\EpointClient;
 $client = new EpointClient(
     publicKey: 'i000000001',
     privateKey: 'your-private-key',
-    testMode: true
 );
 
 try {

@@ -27,8 +27,7 @@ use Epoint\EpointClient;
 
 $client = new EpointClient(
     publicKey: 'i000000001',
-    privateKey: 'your-private-key',
-    testMode: true
+    privateKey: 'your-private-key'
 );
 
 // Get POST data
@@ -87,8 +86,7 @@ use Epoint\Exceptions\SignatureVerificationException;
 // Initialize client
 $client = new EpointClient(
     publicKey: getenv('EPOINT_PUBLIC_KEY'),
-    privateKey: getenv('EPOINT_PRIVATE_KEY'),
-    testMode: (bool) getenv('EPOINT_TEST_MODE')
+    privateKey: getenv('EPOINT_PRIVATE_KEY')
 );
 
 // Get callback data

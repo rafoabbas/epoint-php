@@ -10,7 +10,6 @@ use Epoint\Exceptions\SignatureVerificationException;
 $client = new EpointClient(
     publicKey: 'i000000001',
     privateKey: 'your-private-key',
-    testMode: true
 );
 
 // Get callback data from POST request

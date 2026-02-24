@@ -31,12 +31,10 @@ class EpointClient
     /**
      * @param  string  $publicKey  Merchant public key (e.g., i000000001)
      * @param  string  $privateKey  Merchant private key for signature generation
-     * @param  bool  $testMode  Use test environment
      */
     public function __construct(
         private readonly string $publicKey,
-        private readonly string $privateKey,
-        private readonly bool $testMode = false
+        private readonly string $privateKey
     ) {
         if (!extension_loaded('curl')) {
             throw new EpointException('cURL extension is required');
@@ -198,8 +196,8 @@ class EpointClient
             CURLOPT_POSTFIELDS => $formData,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => self::TIMEOUT,
-            CURLOPT_SSL_VERIFYPEER => !$this->testMode,
-            CURLOPT_SSL_VERIFYHOST => !$this->testMode ? 2 : 0,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/x-www-form-urlencoded',
                 'Content-Length: ' . strlen($formData),
@@ -252,8 +250,8 @@ class EpointClient
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => self::TIMEOUT,
-            CURLOPT_SSL_VERIFYPEER => !$this->testMode,
-            CURLOPT_SSL_VERIFYHOST => !$this->testMode ? 2 : 0,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_HTTPHEADER => [
                 'Accept: application/json',
             ],
