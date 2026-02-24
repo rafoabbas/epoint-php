@@ -6,3 +6,6 @@
 phpunit.xml export-ignore
 .php-cs-fixer.php export-ignore
 phpstan.neon export-ignore
+release.sh export-ignore
+wiki export-ignore
+wiki-publish.sh export-ignore
