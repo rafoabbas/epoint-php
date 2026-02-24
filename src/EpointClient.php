@@ -9,6 +9,7 @@ use Epoint\Enums\Language;
 use Epoint\Exceptions\EpointException;
 use Epoint\Exceptions\SignatureVerificationException;
 use Epoint\Requests\CardRegistrationRequest;
+use Epoint\Requests\CardRegistrationWithPayRequest;
 use Epoint\Requests\InvoiceRequest;
 use Epoint\Requests\PaymentRequest;
 use Epoint\Requests\PreauthRequest;
@@ -63,6 +64,14 @@ class EpointClient
     public function registerCard(): CardRegistrationRequest
     {
         return new CardRegistrationRequest($this);
+    }
+
+    /**
+     * Register a card with payment
+     */
+    public function registerCardWithPay(): CardRegistrationWithPayRequest
+    {
+        return new CardRegistrationWithPayRequest($this);
     }
 
     /**

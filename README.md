@@ -10,6 +10,7 @@ Modern PHP SDK for integrating [Epoint.az](https://epoint.az) payment gateway in
 
 - ✅ **Standard Payment** - Accept online card payments
 - ✅ **Card Registration** - Save cards for future payments (PCI-compliant tokenization)
+- ✅ **Card Registration with Payment** - Register card and process payment in one step
 - ✅ **Saved Card Payments** - Charge saved cards without re-entering details
 - ✅ **Split Payments** - Split payment between multiple merchants
 - ✅ **Preauth** - Hold funds before capture
@@ -36,6 +37,13 @@ For detailed documentation, guides, and advanced usage examples, visit our **[Gi
 
 **Official Epoint API Documentation:**
 - 📄 [Epoint API Documentation (PDF)](https://epointbucket.s3.eu-central-1.amazonaws.com/files/instructions/API%20Epoint%20en.pdf)
+
+## Official Platform Plugins
+
+Use the ready-made plugins below if you need to integrate Epoint into popular e-commerce platforms without writing a custom integration from scratch:
+
+- 🛒 [OpenCart 3.0.x Plugin](https://github.com/rafoabbas/epoint-opencart-v3.0.x)
+- 🧩 [WooCommerce 9.x.x Plugin](https://github.com/rafoabbas/epoint-woocommerce-9.x.x)
 
 ## Requirements
 
@@ -143,6 +151,23 @@ $response = $client->registerCard()
 
 // Get card_id from callback and store in your database
 $cardId = $response->getCardId();
+```
+
+### Card Registration with Payment
+
+```php
+// Register card and process payment simultaneously
+$response = $client->registerCardWithPay()
+    ->amount(100.50)
+    ->orderId('ORDER-123')
+    ->description('First purchase + save card')
+    ->successUrl('https://yoursite.com/cards/success')
+    ->errorUrl('https://yoursite.com/cards/error')
+    ->send();
+
+// Get both card_id and transaction from response
+$cardId = $response->getCardId();
+$transaction = $response->getTransactionId();
 ```
 
 ### Payment with Saved Card
@@ -279,6 +304,7 @@ if ($status['status'] === 'ok') {
 | `payment()` | Create standard payment request |
 | `checkStatus()` | Check payment status |
 | `registerCard()` | Register card without payment |
+| `registerCardWithPay()` | Register card with payment in one step |
 | `savedCardPayment()` | Payment with saved card |
 | `refund()` | Refund payment |
 | `reverse()` | Reverse/cancel transaction |
