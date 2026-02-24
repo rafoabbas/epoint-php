@@ -2,6 +2,11 @@
 
 All notable changes to `rafoabbas/epoint-php` will be documented in this file.
 
+## 0.2.1 - 2026-02-25
+
+### Added
+- `getCardId()` method to `StatusResponse` class for retrieving card ID from payment status responses
+
 ## 0.2.0 - 2026-02-24
 
 ### Added
