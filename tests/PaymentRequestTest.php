@@ -18,8 +18,7 @@ class PaymentRequestTest extends TestCase
     {
         $this->client = new EpointClient(
             publicKey: 'i000000001',
-            privateKey: 'test-private-key',
-            testMode: true
+            privateKey: 'test-private-key'
         );
     }
 
