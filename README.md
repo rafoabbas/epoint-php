@@ -25,7 +25,7 @@ Modern PHP SDK for integrating [Epoint.az](https://epoint.az) payment gateway in
 
 - PHP 8.2 or higher
 - ext-json
-- GuzzleHTTP 7.0+
+- ext-curl
 
 ## Installation
 
