@@ -34,6 +34,9 @@ For detailed documentation, guides, and advanced usage examples, visit our **[Gi
 - 🧪 [Testing Guide](https://github.com/rafoabbas/epoint-php/wiki/Testing)
 - ❓ [FAQ & Troubleshooting](https://github.com/rafoabbas/epoint-php/wiki/FAQ)
 
+**Official Epoint API Documentation:**
+- 📄 [Epoint API Documentation (PDF)](https://epointbucket.s3.eu-central-1.amazonaws.com/files/instructions/API%20Epoint%20en.pdf)
+
 ## Requirements
 
 - PHP 8.2 or higher
