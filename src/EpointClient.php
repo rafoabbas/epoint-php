@@ -16,6 +16,8 @@ use Epoint\Requests\PreauthRequest;
 use Epoint\Requests\RefundRequest;
 use Epoint\Requests\ReverseRequest;
 use Epoint\Requests\SavedCardPaymentRequest;
+use Epoint\Requests\SplitCardPaymentRequest;
+use Epoint\Requests\SplitCardRegistrationWithPayRequest;
 use Epoint\Requests\SplitPaymentRequest;
 use Epoint\Requests\StatusCheckRequest;
 use Epoint\Requests\WalletRequest;
@@ -107,6 +109,22 @@ class EpointClient
     }
 
     /**
+     * Execute split payment with saved card
+     */
+    public function splitCardPayment(): SplitCardPaymentRequest
+    {
+        return new SplitCardPaymentRequest($this);
+    }
+
+    /**
+     * Register card with split payment
+     */
+    public function splitCardRegistrationWithPay(): SplitCardRegistrationWithPayRequest
+    {
+        return new SplitCardRegistrationWithPayRequest($this);
+    }
+
+    /**
      * Create preauth request
      */
     public function preauth(): PreauthRequest
@@ -187,6 +205,7 @@ class EpointClient
 
         $data = $this->encodeData($payload);
         $signature = $this->generateSignature($data, $this->privateKey);
+
 
         $formData = http_build_query([
             'data' => $data,

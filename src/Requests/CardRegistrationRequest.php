@@ -18,7 +18,7 @@ class CardRegistrationRequest
     {
         $this->data['public_key'] = $client->getPublicKey();
         $this->data['language'] = Language::AZ->value;
-        $this->data['refund'] = 0; // 0 for payment card, 1 for refund card
+        $this->data['refund'] = '0'; // 0 for payment card, 1 for refund card
     }
 
     public function language(Language $language): self
@@ -30,7 +30,7 @@ class CardRegistrationRequest
 
     public function forRefund(bool $refund = true): self
     {
-        $this->data['refund'] = $refund ? 1 : 0;
+        $this->data['refund'] = $refund ? '1' : '0';
 
         return $this;
     }

@@ -8,10 +8,9 @@ use Epoint\Enums\Currency;
 use Epoint\Enums\Language;
 use Epoint\EpointClient;
 use Epoint\Exceptions\EpointException;
-use Epoint\Responses\PaymentResponse;
-use Epoint\Responses\PreauthCompleteResponse;
+use Epoint\Responses\CardRegistrationWithPayResponse;
 
-class PreauthRequest
+class SplitCardRegistrationWithPayRequest
 {
     /** @var array<string, mixed> */
     private array $data = [];
@@ -26,6 +25,20 @@ class PreauthRequest
     public function amount(float $amount): self
     {
         $this->data['amount'] = $amount;
+
+        return $this;
+    }
+
+    public function splitUser(string $splitUser): self
+    {
+        $this->data['split_user'] = $splitUser;
+
+        return $this;
+    }
+
+    public function splitAmount(float $splitAmount): self
+    {
+        $this->data['split_amount'] = $splitAmount;
 
         return $this;
     }
@@ -73,45 +86,17 @@ class PreauthRequest
     }
 
     /**
-     * @param  array<string, mixed>  $attributes
-     */
-    public function otherAttributes(array $attributes): self
-    {
-        $this->data['other_attr'] = $attributes;
-
-        return $this;
-    }
-
-    /**
-     * Send preauth request
+     * Send split card registration with payment request
      *
      * @throws EpointException
      */
-    public function send(): PaymentResponse
+    public function send(): CardRegistrationWithPayResponse
     {
         $this->validate();
 
-        $response = $this->client->post('/pre-auth-request', $this->data);
+        $response = $this->client->post('/split-card-registration-with-pay', $this->data);
 
-        return new PaymentResponse($response);
-    }
-
-    /**
-     * Complete preauth transaction
-     *
-     * @throws EpointException
-     */
-    public function complete(string $transaction, float $amount): PreauthCompleteResponse
-    {
-        $payload = [
-            'public_key' => $this->client->getPublicKey(),
-            'transaction' => $transaction,
-            'amount' => $amount,
-        ];
-
-        $response = $this->client->post('/pre-auth-complete', $payload);
-
-        return new PreauthCompleteResponse($response);
+        return new CardRegistrationWithPayResponse($response);
     }
 
     /**
@@ -119,7 +104,7 @@ class PreauthRequest
      */
     private function validate(): void
     {
-        $required = ['amount', 'order_id'];
+        $required = ['amount', 'order_id', 'split_user', 'split_amount'];
 
         foreach ($required as $field) {
             if (! isset($this->data[$field])) {

@@ -70,7 +70,26 @@ $client->registerCard()
     ->send()
 ```
 
-**Returns:** `PaymentResponse`
+**Returns:** `CardRegistrationResponse`
+
+### registerCardWithPay()
+
+Register a card and process payment in one step.
+
+```php
+$client->registerCardWithPay()
+    ->amount(float $amount)
+    ->orderId(string $orderId)
+    ->description(string $description = null)
+    ->language(Language $language = Language::EN)
+    ->currency(Currency $currency = Currency::AZN)
+    ->forRefund(bool $forRefund = false)
+    ->successUrl(string $url = null)
+    ->errorUrl(string $url = null)
+    ->send()
+```
+
+**Returns:** `CardRegistrationWithPayResponse`
 
 ### savedCardPayment()
 
@@ -127,12 +146,53 @@ $client->splitPayment()
     ->splitUser(string $merchantId)
     ->splitAmount(float $amount)
     ->description(string $description = null)
+    ->language(Language $language = Language::AZ)
+    ->currency(Currency $currency = Currency::AZN)
     ->successUrl(string $url = null)
     ->errorUrl(string $url = null)
     ->send()
 ```
 
 **Returns:** `PaymentResponse`
+
+### splitCardPayment()
+
+Execute split payment with saved card.
+
+```php
+$client->splitCardPayment()
+    ->cardId(string $cardId)
+    ->amount(float $amount)
+    ->orderId(string $orderId)
+    ->splitUser(string $merchantId)
+    ->splitAmount(float $amount)
+    ->description(string $description = null)
+    ->language(Language $language = Language::AZ)
+    ->currency(Currency $currency = Currency::AZN)
+    ->execute()
+```
+
+**Returns:** `PaymentResponse`
+
+### splitCardRegistrationWithPay()
+
+Register card with split payment in one step.
+
+```php
+$client->splitCardRegistrationWithPay()
+    ->amount(float $amount)
+    ->orderId(string $orderId)
+    ->splitUser(string $merchantId)
+    ->splitAmount(float $amount)
+    ->description(string $description = null)
+    ->language(Language $language = Language::AZ)
+    ->currency(Currency $currency = Currency::AZN)
+    ->successUrl(string $url = null)
+    ->errorUrl(string $url = null)
+    ->send()
+```
+
+**Returns:** `CardRegistrationWithPayResponse`
 
 ### preauth()
 
@@ -144,6 +204,9 @@ $client->preauth()
     ->amount(float $amount)
     ->orderId(string $orderId)
     ->description(string $description = null)
+    ->language(Language $language = Language::AZ)
+    ->currency(Currency $currency = Currency::AZN)
+    ->otherAttributes(array $attributes = [])
     ->successUrl(string $url = null)
     ->errorUrl(string $url = null)
     ->send()
@@ -153,7 +216,7 @@ $client->preauth()
     ->complete(string $transactionId, float $amount)
 ```
 
-**Returns:** `PaymentResponse`
+**Returns:** `PaymentResponse` (for create), `PreauthCompleteResponse` (for complete)
 
 ## Widget & Wallets
 
@@ -300,6 +363,9 @@ $response->getRedirectUrl(): ?string
 $response->getTransaction(): ?string
 $response->getAmount(): ?float
 $response->getOrderId(): ?string
+$response->getBankResponse(): ?string
+$response->getOperationCode(): ?string
+$response->getOtherAttributes(): array
 ```
 
 ### StatusResponse
@@ -309,13 +375,57 @@ $response->getPaymentStatus(): PaymentStatus
 $response->getTransaction(): ?string
 $response->getAmount(): ?float
 $response->getOrderId(): ?string
+$response->getBankResponse(): ?string
+$response->getOtherAttributes(): array
 ```
 
-### CardResponse
+### CardRegistrationResponse
 
 ```php
+$response->getRedirectUrl(): ?string
 $response->getCardId(): ?string
 $response->getCardMask(): ?string
+$response->getBankResponse(): ?string
+$response->getOperationCode(): ?string
+$response->getRrn(): ?string
+```
+
+### CardRegistrationWithPayResponse
+
+```php
+$response->getRedirectUrl(): ?string
+$response->getCardId(): ?string
+$response->getTransaction(): ?string
+$response->getOrderId(): ?string
+$response->getAmount(): ?float
+$response->getCardMask(): ?string
+$response->getCardName(): ?string
+$response->getBankTransaction(): ?string
+$response->getRrn(): ?string
+$response->getBankResponse(): ?string
+$response->getOperationCode(): ?string
+$response->getOtherAttributes(): array
+```
+
+### RefundResponse
+
+```php
+$response->getTransaction(): ?string
+$response->getOrderId(): ?string
+$response->getAmount(): ?float
+$response->getBankResponse(): ?string
+```
+
+### PreauthCompleteResponse
+
+```php
+$response->getTransaction(): ?string
+$response->getAmount(): ?float
+$response->getBankTransaction(): ?string
+$response->getRrn(): ?string
+$response->getCardMask(): ?string
+$response->getCardName(): ?string
+$response->getBankResponse(): ?string
 ```
 
 ### WidgetResponse

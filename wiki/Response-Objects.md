@@ -17,7 +17,7 @@ $response->toArray()            // Get complete response data as array
 
 ## Payment Response
 
-Returned by `payment()`, `savedCardPayment()`, `splitPayment()`, `preauth()`:
+Returned by `payment()`, `savedCardPayment()`, `splitPayment()`, `splitCardPayment()`, `preauth()`:
 
 ```php
 $response = $client->payment()->amount(100)->orderId('ORDER-123')->send();
@@ -30,6 +30,11 @@ $response->getRedirectUrl();   // Payment page URL
 $response->getTransaction();   // Transaction ID (e.g., te001234567)
 $response->getAmount();        // Payment amount
 $response->getOrderId();       // Your order ID
+
+// Get bank response details
+$response->getBankResponse();  // Bank response code
+$response->getOperationCode(); // Operation code
+$response->getOtherAttributes(); // Additional attributes array
 
 // Get full data
 $data = $response->toArray();
@@ -52,6 +57,10 @@ $status->getTransaction();     // Transaction ID
 $status->getAmount();          // Payment amount
 $status->getOrderId();         // Your order ID
 $status->getMessage();         // Status message
+
+// Get bank response details
+$status->getBankResponse();    // Bank response code
+$status->getOtherAttributes(); // Additional attributes array
 ```
 
 ## Card Registration Response
@@ -65,6 +74,40 @@ $response = $client->registerCard()->send();
 $response->getCardId();        // Saved card ID
 $response->getCardMask();      // Masked card number (e.g., ****1234)
 $response->getRedirectUrl();   // Card registration page URL
+
+// Get bank response details
+$response->getBankResponse();  // Bank response code
+$response->getOperationCode(); // Operation code
+$response->getRrn();           // Retrieval reference number
+```
+
+## Card Registration with Payment Response
+
+Returned by `registerCardWithPay()` and `splitCardRegistrationWithPay()`:
+
+```php
+$response = $client->registerCardWithPay()
+    ->amount(100)
+    ->orderId('ORDER-123')
+    ->send();
+
+// Card details (available in callback)
+$response->getCardId();        // Saved card ID
+$response->getCardMask();      // Masked card number (e.g., ****1234)
+$response->getCardName();      // Card holder name
+
+// Payment details
+$response->getTransaction();   // Transaction ID
+$response->getOrderId();       // Your order ID
+$response->getAmount();        // Payment amount
+$response->getRedirectUrl();   // Payment page URL
+
+// Bank response details
+$response->getBankTransaction(); // Bank transaction ID
+$response->getRrn();           // Retrieval reference number
+$response->getBankResponse();  // Bank response code
+$response->getOperationCode(); // Operation code
+$response->getOtherAttributes(); // Additional attributes array
 ```
 
 ## Refund Response
@@ -81,6 +124,28 @@ $response = $client->refund()
 $response->isSuccess();        // Check if refund initiated
 $response->getTransaction();   // Refund transaction ID
 $response->getMessage();       // Refund status message
+$response->getBankResponse();  // Bank response code
+```
+
+## Preauth Complete Response
+
+Returned by `preauth()->complete()`:
+
+```php
+$response = $client->preauth()->complete('te001234567', 85.00);
+
+// Transaction details
+$response->getTransaction();   // Transaction ID
+$response->getAmount();        // Captured amount
+
+// Card details
+$response->getCardMask();      // Masked card number
+$response->getCardName();      // Card holder name
+
+// Bank response details
+$response->getBankTransaction(); // Bank transaction ID
+$response->getRrn();           // Retrieval reference number
+$response->getBankResponse();  // Bank response code
 ```
 
 ## Widget Response

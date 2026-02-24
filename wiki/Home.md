@@ -12,14 +12,12 @@ Welcome to the official documentation for the Epoint PHP SDK. This SDK provides 
 - [Standard Payments](Standard-Payments)
 - [Payment Status Check](Payment-Status-Check)
 - [Card Registration & Management](Card-Management)
+- [Card Registration with Payment](Card-Management#card-registration-with-payment)
 - [Saved Card Payments](Card-Management#payment-with-saved-card)
 
 ### Advanced Features
-- [Split Payments](Split-Payments)
-- [Preauth (Hold & Capture)](Preauth)
+- [Split Payments](Standard-Payments#split-payments)
 - [Refunds & Reversals](Refunds-and-Reversals)
-- [Digital Wallets (Apple Pay, Google Pay)](Digital-Wallets)
-- [Invoices](Invoices)
 
 ### Integration
 - [Callback Handling & Security](Callback-Handling)
@@ -34,9 +32,10 @@ Welcome to the official documentation for the Epoint PHP SDK. This SDK provides 
 
 ✅ **Standard Payment** - Accept online card payments
 ✅ **Card Registration** - Save cards for future payments (PCI-compliant)
+✅ **Card Registration with Payment** - Register card and process payment in one step
 ✅ **Saved Card Payments** - Charge saved cards without re-entering details
-✅ **Split Payments** - Split payment between multiple merchants
-✅ **Preauth** - Hold funds before capture
+✅ **Split Payments** - Split payment between multiple merchants (with saved card & registration support)
+✅ **Preauth** - Hold funds before capture (authorization + completion)
 ✅ **Refunds & Reversals** - Full or partial refunds, transaction cancellation
 ✅ **Apple Pay & Google Pay** - Digital wallet integration
 ✅ **Wallets** - Support for local e-wallets

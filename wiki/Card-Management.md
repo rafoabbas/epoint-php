@@ -36,6 +36,55 @@ $cardMask = $callbackData['card_mask'];  // e.g., "****1234"
 saveCardForCustomer($customerId, $cardId, $cardMask);
 ```
 
+## Card Registration with Payment
+
+Register a card and process a payment simultaneously in one step. This is useful when you want to save the customer's card during their first purchase.
+
+```php
+$response = $client->registerCardWithPay()
+    ->amount(100.50)
+    ->orderId('ORDER-12345')
+    ->description('First purchase + save card')
+    ->language(Language::EN)
+    ->successUrl('https://yoursite.com/cards/success')
+    ->errorUrl('https://yoursite.com/cards/error')
+    ->send();
+
+if ($response->isSuccess()) {
+    // Redirect user to payment page
+    header('Location: ' . $response->getRedirectUrl());
+    exit;
+}
+
+// After successful payment, get both card_id and transaction from callback
+$data = $_POST['data'];
+$signature = $_POST['signature'];
+
+$callbackData = $client->verifyCallback($data, $signature);
+
+$cardId = $callbackData['card_id'];          // Save for future payments
+$transaction = $callbackData['transaction']; // Payment transaction ID
+$amount = $callbackData['amount'];           // Payment amount
+$orderId = $callbackData['order_id'];        // Your order ID
+
+// Store both card and payment info
+saveCard($customerId, $cardId, $callbackData['card_mask']);
+savePayment($orderId, $transaction, $amount, 'success');
+```
+
+### Parameters for Card Registration with Payment
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `amount()` | float | Yes | Payment amount |
+| `orderId()` | string | Yes | Your unique order ID |
+| `description()` | string | No | Payment description |
+| `language()` | Language | No | Payment page language (default: EN) |
+| `currency()` | Currency | No | Payment currency (default: AZN) |
+| `forRefund()` | bool | No | Register card for refund operations |
+| `successUrl()` | string | No | Success redirect URL |
+| `errorUrl()` | string | No | Error redirect URL |
+
 ## Payment with Saved Card
 
 Charge a saved card without requiring the customer to re-enter card details:

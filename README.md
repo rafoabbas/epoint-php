@@ -12,8 +12,8 @@ Modern PHP SDK for integrating [Epoint.az](https://epoint.az) payment gateway in
 - ✅ **Card Registration** - Save cards for future payments (PCI-compliant tokenization)
 - ✅ **Card Registration with Payment** - Register card and process payment in one step
 - ✅ **Saved Card Payments** - Charge saved cards without re-entering details
-- ✅ **Split Payments** - Split payment between multiple merchants
-- ✅ **Preauth** - Hold funds before capture
+- ✅ **Split Payments** - Split payment between multiple merchants (with saved card & registration)
+- ✅ **Preauth** - Hold funds before capture (authorization + completion)
 - ✅ **Refunds & Reversals** - Full or partial refunds, transaction cancellation
 - ✅ **Apple Pay & Google Pay** - Digital wallet integration
 - ✅ **Wallets** - Support for local e-wallets
@@ -167,7 +167,7 @@ $response = $client->registerCardWithPay()
 
 // Get both card_id and transaction from response
 $cardId = $response->getCardId();
-$transaction = $response->getTransactionId();
+$transaction = $response->getTransaction();
 ```
 
 ### Payment with Saved Card
@@ -212,6 +212,28 @@ $response = $client->splitPayment()
     ->splitAmount(30.00)      // Amount for second merchant
     ->description('Marketplace order')
     ->send();
+
+// Split payment with saved card
+$response = $client->splitCardPayment()
+    ->cardId('saved-card-id')
+    ->amount(100.00)
+    ->orderId('ORDER-003')
+    ->splitUser('i000000002')
+    ->splitAmount(30.00)
+    ->execute();
+
+// Split payment with card registration
+$response = $client->splitCardRegistrationWithPay()
+    ->amount(100.00)
+    ->orderId('ORDER-003')
+    ->splitUser('i000000002')
+    ->splitAmount(30.00)
+    ->description('First split payment + save card')
+    ->send();
+
+// Get both card_id and transaction from response
+$cardId = $response->getCardId();
+$transaction = $response->getTransaction();
 ```
 
 ### Preauth (Hold Funds)
@@ -309,6 +331,8 @@ if ($status['status'] === 'ok') {
 | `refund()` | Refund payment |
 | `reverse()` | Reverse/cancel transaction |
 | `splitPayment()` | Split payment between merchants |
+| `splitCardPayment()` | Split payment with saved card |
+| `splitCardRegistrationWithPay()` | Register card with split payment |
 | `preauth()` | Preauth (hold and capture) |
 | `widget()` | Apple Pay / Google Pay widget |
 | `wallet()` | Wallet operations |

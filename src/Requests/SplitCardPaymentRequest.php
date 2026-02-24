@@ -10,7 +10,7 @@ use Epoint\EpointClient;
 use Epoint\Exceptions\EpointException;
 use Epoint\Responses\PaymentResponse;
 
-class SavedCardPaymentRequest
+class SplitCardPaymentRequest
 {
     /** @var array<string, mixed> */
     private array $data = [];
@@ -32,6 +32,20 @@ class SavedCardPaymentRequest
     public function amount(float $amount): self
     {
         $this->data['amount'] = $amount;
+
+        return $this;
+    }
+
+    public function splitUser(string $splitUser): self
+    {
+        $this->data['split_user'] = $splitUser;
+
+        return $this;
+    }
+
+    public function splitAmount(float $splitAmount): self
+    {
+        $this->data['split_amount'] = $splitAmount;
 
         return $this;
     }
@@ -65,7 +79,7 @@ class SavedCardPaymentRequest
     }
 
     /**
-     * Execute payment with saved card
+     * Execute split payment with saved card
      *
      * @throws EpointException
      */
@@ -73,7 +87,7 @@ class SavedCardPaymentRequest
     {
         $this->validate();
 
-        $response = $this->client->post('/execute-pay', $this->data);
+        $response = $this->client->post('/split-execute-pay', $this->data);
 
         return new PaymentResponse($response);
     }
@@ -83,7 +97,7 @@ class SavedCardPaymentRequest
      */
     private function validate(): void
     {
-        $required = ['card_id', 'amount', 'order_id'];
+        $required = ['card_id', 'amount', 'order_id', 'split_user', 'split_amount'];
 
         foreach ($required as $field) {
             if (! isset($this->data[$field])) {

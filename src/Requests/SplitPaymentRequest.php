@@ -57,6 +57,30 @@ class SplitPaymentRequest
         return $this;
     }
 
+    public function currency(Currency $currency): self
+    {
+        $this->data['currency'] = $currency->value;
+
+        return $this;
+    }
+
+    public function language(Language $language): self
+    {
+        $this->data['language'] = $language->value;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function otherAttributes(array $attributes): self
+    {
+        $this->data['other_attr'] = $attributes;
+
+        return $this;
+    }
+
     public function successUrl(string $url): self
     {
         $this->data['success_redirect_url'] = $url;

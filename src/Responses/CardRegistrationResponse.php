@@ -45,4 +45,28 @@ class CardRegistrationResponse extends BaseResponse
     {
         return $this->data['card_name'] ?? null;
     }
+
+    /**
+     * Get bank response
+     */
+    public function getBankResponse(): ?string
+    {
+        return $this->data['bank_response'] ?? null;
+    }
+
+    /**
+     * Get operation code (001 - card registration, 100 - user payment)
+     */
+    public function getOperationCode(): ?string
+    {
+        return $this->data['operation_code'] ?? null;
+    }
+
+    /**
+     * Get RRN (Retrieval Reference Number)
+     */
+    public function getRrn(): ?string
+    {
+        return $this->data['rrn'] ?? null;
+    }
 }

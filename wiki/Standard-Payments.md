@@ -155,6 +155,81 @@ try {
 }
 ```
 
+## Split Payments
+
+Split payment amount between multiple merchants (e.g., marketplace platforms).
+
+### Standard Split Payment
+
+```php
+$response = $client->splitPayment()
+    ->amount(100.00)
+    ->orderId('ORDER-12350')
+    ->splitUser('i000000002')  // Second merchant ID
+    ->splitAmount(30.00)       // Amount for second merchant
+    ->description('Marketplace order')
+    ->language(Language::EN)
+    ->successUrl('https://example.com/payment/success')
+    ->errorUrl('https://example.com/payment/error')
+    ->send();
+
+if ($response->isSuccess()) {
+    header('Location: ' . $response->getRedirectUrl());
+}
+```
+
+### Split Payment with Saved Card
+
+```php
+$response = $client->splitCardPayment()
+    ->cardId('saved-card-id')
+    ->amount(100.00)
+    ->orderId('ORDER-12351')
+    ->splitUser('i000000002')
+    ->splitAmount(30.00)
+    ->description('Subscription split payment')
+    ->execute();
+
+if ($response->isSuccess()) {
+    echo 'Split payment successful!';
+}
+```
+
+### Split Payment with Card Registration
+
+Register a card and split the payment in one step:
+
+```php
+$response = $client->splitCardRegistrationWithPay()
+    ->amount(100.00)
+    ->orderId('ORDER-12352')
+    ->splitUser('i000000002')
+    ->splitAmount(30.00)
+    ->description('First purchase + save card')
+    ->successUrl('https://example.com/cards/success')
+    ->errorUrl('https://example.com/cards/error')
+    ->send();
+
+if ($response->isSuccess()) {
+    // Get both card_id and transaction from callback
+    header('Location: ' . $response->getRedirectUrl());
+}
+```
+
+### Split Payment Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `amount()` | float | Yes | Total payment amount |
+| `orderId()` | string | Yes | Your unique order ID |
+| `splitUser()` | string | Yes | Second merchant public key |
+| `splitAmount()` | float | Yes | Amount to transfer to second merchant |
+| `description()` | string | No | Payment description |
+| `language()` | Language | No | Payment page language |
+| `currency()` | Currency | No | Payment currency |
+
+**Note:** The main merchant receives `amount - splitAmount`. For example, if `amount=100` and `splitAmount=30`, main merchant gets 70, second merchant gets 30.
+
 ## Best Practices
 
 1. **Unique Order IDs**: Always use unique order IDs for each payment
@@ -166,5 +241,6 @@ try {
 ## See Also
 
 - [Payment Status Check](Payment-Status-Check)
+- [Card Management](Card-Management)
 - [Callback Handling](Callback-Handling)
 - [Testing](Testing)

@@ -75,4 +75,22 @@ class StatusResponse extends BaseResponse
     {
         return isset($this->data['amount']) ? (float) $this->data['amount'] : null;
     }
+
+    /**
+     * Get bank response
+     */
+    public function getBankResponse(): ?string
+    {
+        return $this->data['bank_response'] ?? null;
+    }
+
+    /**
+     * Get additional payment attributes
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getOtherAttributes(): ?array
+    {
+        return $this->data['other_attr'] ?? null;
+    }
 }
