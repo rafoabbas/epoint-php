@@ -69,6 +69,14 @@ class StatusResponse extends BaseResponse
     }
 
     /**
+     * Get card ID
+     */
+    public function getCardId(): ?string
+    {
+        return $this->data['card_id'] ?? null;
+    }
+
+    /**
      * Get amount
      */
     public function getAmount(): ?float
