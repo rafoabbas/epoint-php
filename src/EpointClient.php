@@ -20,16 +20,13 @@ use Epoint\Requests\StatusCheckRequest;
 use Epoint\Requests\WalletRequest;
 use Epoint\Requests\WidgetRequest;
 use Epoint\Traits\HasSignature;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 
 class EpointClient
 {
     use HasSignature;
 
     private const BASE_URL = 'https://epoint.az/api/1';
-
-    private Client $httpClient;
+    private const TIMEOUT = 30;
 
     /**
      * @param  string  $publicKey  Merchant public key (e.g., i000000001)
@@ -41,11 +38,9 @@ class EpointClient
         private readonly string $privateKey,
         private readonly bool $testMode = false
     ) {
-        $this->httpClient = new Client([
-            'base_uri' => self::BASE_URL,
-            'timeout' => 30,
-            'verify' => ! $testMode,
-        ]);
+        if (!extension_loaded('curl')) {
+            throw new EpointException('cURL extension is required');
+        }
     }
 
     /**
@@ -145,14 +140,8 @@ class EpointClient
      */
     public function heartbeat(): array
     {
-        try {
-            $response = $this->httpClient->get('/heartbeat');
-
-            /** @var array{status: string} */
-            return json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (GuzzleException $e) {
-            throw new EpointException('Heartbeat request failed: '.$e->getMessage(), previous: $e);
-        }
+        /** @var array{status: string} */
+        return $this->get('/heartbeat');
     }
 
     /**
@@ -192,18 +181,49 @@ class EpointClient
         $data = $this->encodeData($payload);
         $signature = $this->generateSignature($data, $this->privateKey);
 
-        try {
-            $response = $this->httpClient->post($endpoint, [
-                'form_params' => [
-                    'data' => $data,
-                    'signature' => $signature,
-                ],
-            ]);
+        $formData = http_build_query([
+            'data' => $data,
+            'signature' => $signature,
+        ]);
 
+        $url = self::BASE_URL . $endpoint;
+
+        $ch = curl_init($url);
+        if ($ch === false) {
+            throw new EpointException("Failed to initialize cURL for {$endpoint}");
+        }
+
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $formData,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => self::TIMEOUT,
+            CURLOPT_SSL_VERIFYPEER => !$this->testMode,
+            CURLOPT_SSL_VERIFYHOST => !$this->testMode ? 2 : 0,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/x-www-form-urlencoded',
+                'Content-Length: ' . strlen($formData),
+            ],
+        ]);
+
+        $response = curl_exec($ch);
+        $error = curl_error($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($response === false) {
+            throw new EpointException("API request to {$endpoint} failed: {$error}");
+        }
+
+        if ($httpCode >= 400) {
+            throw new EpointException("API request to {$endpoint} failed with HTTP {$httpCode}: {$response}");
+        }
+
+        try {
             /** @var array<string, mixed> */
-            return json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (GuzzleException $e) {
-            throw new EpointException("API request to {$endpoint} failed: ".$e->getMessage(), previous: $e);
+            return json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new EpointException("Failed to decode JSON response from {$endpoint}: " . $e->getMessage(), previous: $e);
         }
     }
 
@@ -218,15 +238,45 @@ class EpointClient
      */
     public function get(string $endpoint, array $query = []): array
     {
-        try {
-            $response = $this->httpClient->get($endpoint, [
-                'query' => $query,
-            ]);
+        $url = self::BASE_URL . $endpoint;
 
+        if (!empty($query)) {
+            $url .= '?' . http_build_query($query);
+        }
+
+        $ch = curl_init($url);
+        if ($ch === false) {
+            throw new EpointException("Failed to initialize cURL for {$endpoint}");
+        }
+
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => self::TIMEOUT,
+            CURLOPT_SSL_VERIFYPEER => !$this->testMode,
+            CURLOPT_SSL_VERIFYHOST => !$this->testMode ? 2 : 0,
+            CURLOPT_HTTPHEADER => [
+                'Accept: application/json',
+            ],
+        ]);
+
+        $response = curl_exec($ch);
+        $error = curl_error($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($response === false) {
+            throw new EpointException("API request to {$endpoint} failed: {$error}");
+        }
+
+        if ($httpCode >= 400) {
+            throw new EpointException("API request to {$endpoint} failed with HTTP {$httpCode}: {$response}");
+        }
+
+        try {
             /** @var array<string, mixed> */
-            return json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (GuzzleException $e) {
-            throw new EpointException("API request to {$endpoint} failed: ".$e->getMessage(), previous: $e);
+            return json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new EpointException("Failed to decode JSON response from {$endpoint}: " . $e->getMessage(), previous: $e);
         }
     }
 
