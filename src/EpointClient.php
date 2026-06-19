@@ -10,6 +10,7 @@ use Epoint\Exceptions\EpointException;
 use Epoint\Exceptions\SignatureVerificationException;
 use Epoint\Requests\CardRegistrationRequest;
 use Epoint\Requests\CardRegistrationWithPayRequest;
+use Epoint\Requests\CardStatusCheckRequest;
 use Epoint\Requests\InvoiceRequest;
 use Epoint\Requests\PaymentRequest;
 use Epoint\Requests\PreauthRequest;
@@ -58,6 +59,14 @@ class EpointClient
     public function checkStatus(): StatusCheckRequest
     {
         return new StatusCheckRequest($this);
+    }
+
+    /**
+     * Check card registration status
+     */
+    public function checkCardStatus(): CardStatusCheckRequest
+    {
+        return new CardStatusCheckRequest($this);
     }
 
     /**

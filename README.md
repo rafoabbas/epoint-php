@@ -139,6 +139,22 @@ if ($status->getPaymentStatus() === \Epoint\Enums\PaymentStatus::SUCCESS) {
 }
 ```
 
+### Check Card Registration Status
+
+```php
+use Epoint\Enums\CardStatus;
+
+$status = $client->checkCardStatus()
+    ->cardId('ce001234567')
+    ->get();
+
+if ($status->getCardStatus() === CardStatus::ACTIVE) {
+    echo 'Card is active!';
+    echo 'Card: ' . $status->getCardMask();    // ****1234
+    echo 'Expiry: ' . $status->getExpiredDate(); // 12/25
+}
+```
+
 ### Card Registration
 
 ```php
@@ -325,6 +341,7 @@ if ($status['status'] === 'ok') {
 |--------|-------------|
 | `payment()` | Create standard payment request |
 | `checkStatus()` | Check payment status |
+| `checkCardStatus()` | Check card registration status |
 | `registerCard()` | Register card without payment |
 | `registerCardWithPay()` | Register card with payment in one step |
 | `savedCardPayment()` | Payment with saved card |
@@ -395,6 +412,7 @@ $response->getWidgetUrl()       // Apple Pay / Google Pay widget URL
 
 // Status check methods
 $response->getPaymentStatus()   // PaymentStatus enum (NEW, SUCCESS, ERROR)
+$response->getCardStatus()      // CardStatus enum (NEW, ACTIVE, PENDING, REJECTED, EXPIRED, SESSION_EXPIRED)
 ```
 
 **Pro tip:** Use `->toArray()` for debugging or logging full API responses:
@@ -425,6 +443,7 @@ try {
 ### Enums
 
 ```php
+use Epoint\Enums\CardStatus;
 use Epoint\Enums\Currency;
 use Epoint\Enums\Language;
 use Epoint\Enums\PaymentStatus;
@@ -432,6 +451,7 @@ use Epoint\Enums\PaymentStatus;
 Currency::AZN
 Language::AZ | Language::EN | Language::RU
 PaymentStatus::NEW | PaymentStatus::SUCCESS | PaymentStatus::ERROR
+CardStatus::NEW | CardStatus::ACTIVE | CardStatus::PENDING | CardStatus::REJECTED | CardStatus::EXPIRED | CardStatus::SESSION_EXPIRED
 ```
 
 ## Testing

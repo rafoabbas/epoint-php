@@ -2,6 +2,20 @@
 
 All notable changes to `rafoabbas/epoint-php` will be documented in this file.
 
+## 0.2.2 - 2026-06-19
+
+### Added
+- Card registration status check (`checkCardStatus()`) - Check card status using card ID via `/get-status-card` endpoint
+- `CardStatusCheckRequest` class for building card status check requests
+- `CardStatusResponse` class with getter methods: `getCardStatus()`, `getCardId()`, `getCardName()`, `getCardMask()`, `getExpiredDate()`, `getDescription()`
+- `CardStatus` enum with values: `NEW`, `ACTIVE`, `PENDING`, `REJECTED`, `EXPIRED`, `SESSION_EXPIRED`
+
+### Documentation
+- Updated Payment Status Check wiki with card registration status section
+- Updated API Reference with `checkCardStatus()` method and `CardStatusResponse`
+- Updated Response Objects wiki with Card Status Response documentation
+- Updated README with card status check example and `CardStatus` enum
+
 ## 0.2.1 - 2026-02-25
 
 ### Added

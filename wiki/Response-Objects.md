@@ -63,6 +63,25 @@ $status->getBankResponse();    // Bank response code
 $status->getOtherAttributes(); // Additional attributes array
 ```
 
+## Card Status Response
+
+Returned by `checkCardStatus()`:
+
+```php
+$status = $client->checkCardStatus()->cardId('ce001234567')->get();
+
+// Get card status
+$status->getCardStatus();      // CardStatus enum (NEW, ACTIVE, PENDING, REJECTED, EXPIRED, SESSION_EXPIRED)
+$status->getStatus();          // Status string
+
+// Get card details
+$status->getCardId();          // Card ID
+$status->getCardName();        // Cardholder name
+$status->getCardMask();        // Masked card number (e.g., ****1234)
+$status->getExpiredDate();     // Card expiry date (e.g., 12/25)
+$status->getDescription();     // Card description
+```
+
 ## Card Registration Response
 
 Returned by `registerCard()`:
@@ -229,7 +248,7 @@ if ($response->isError()) {
 
 ## PaymentStatus Enum
 
-Used by status responses:
+Used by payment status responses:
 
 ```php
 use Epoint\Enums\PaymentStatus;
@@ -245,6 +264,31 @@ switch ($status->getPaymentStatus()) {
         break;
     case PaymentStatus::ERROR:
         echo 'Payment failed';
+        break;
+}
+```
+
+## CardStatus Enum
+
+Used by card status responses:
+
+```php
+use Epoint\Enums\CardStatus;
+
+$status = $client->checkCardStatus()->cardId('ce001234567')->get();
+
+switch ($status->getCardStatus()) {
+    case CardStatus::ACTIVE:
+        echo 'Card is active';
+        break;
+    case CardStatus::PENDING:
+        echo 'Card registration pending';
+        break;
+    case CardStatus::EXPIRED:
+        echo 'Card has expired';
+        break;
+    case CardStatus::SESSION_EXPIRED:
+        echo 'Registration session expired';
         break;
 }
 ```

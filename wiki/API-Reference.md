@@ -58,6 +58,18 @@ $client->checkStatus()
 
 **Returns:** `StatusResponse`
 
+### checkCardStatus()
+
+Check card registration status by card ID.
+
+```php
+$client->checkCardStatus()
+    ->cardId(string $cardId)
+    ->get()
+```
+
+**Returns:** `CardStatusResponse`
+
 ### registerCard()
 
 Register a card for future payments.
@@ -341,6 +353,19 @@ PaymentStatus::SUCCESS  // Payment successful
 PaymentStatus::ERROR    // Payment failed
 ```
 
+### CardStatus
+
+```php
+use Epoint\Enums\CardStatus;
+
+CardStatus::NEW              // Card registration initiated
+CardStatus::ACTIVE           // Card is active
+CardStatus::PENDING          // Registration pending
+CardStatus::REJECTED         // Registration rejected
+CardStatus::EXPIRED          // Card expired
+CardStatus::SESSION_EXPIRED  // Registration session expired
+```
+
 ## Response Objects
 
 All responses inherit from `BaseResponse`:
@@ -377,6 +402,17 @@ $response->getAmount(): ?float
 $response->getOrderId(): ?string
 $response->getBankResponse(): ?string
 $response->getOtherAttributes(): array
+```
+
+### CardStatusResponse
+
+```php
+$response->getCardStatus(): CardStatus
+$response->getCardId(): ?string
+$response->getCardName(): ?string
+$response->getCardMask(): ?string
+$response->getExpiredDate(): ?string
+$response->getDescription(): ?string
 ```
 
 ### CardRegistrationResponse

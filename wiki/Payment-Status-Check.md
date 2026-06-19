@@ -1,8 +1,10 @@
 # Payment Status Check
 
-Check the status of a payment using the transaction ID.
+Check the status of a payment or a registered card.
 
-## Basic Usage
+## Payment Status
+
+Check the status of a payment using the transaction ID.
 
 ```php
 $status = $client->checkStatus()
@@ -97,18 +99,115 @@ try {
 }
 ```
 
+## Card Registration Status
+
+Check the status of a registered card using the card ID.
+
+### Basic Usage
+
+```php
+use Epoint\Enums\CardStatus;
+
+$status = $client->checkCardStatus()
+    ->cardId('ce001234567')
+    ->get();
+
+if ($status->getCardStatus() === CardStatus::ACTIVE) {
+    echo 'Card is active!';
+}
+```
+
+### Card Status Response Methods
+
+```php
+// Get card status enum
+$status->getCardStatus();    // CardStatus enum
+
+// Get status string
+$status->getStatus();        // 'new', 'active', 'pending', 'rejected', 'expired', 'session_expired'
+
+// Get card details
+$status->getCardId();        // Card ID
+$status->getCardName();      // Cardholder name
+$status->getCardMask();      // Masked card number (e.g., ****1234)
+$status->getExpiredDate();   // Card expiry date (e.g., 12/25)
+$status->getDescription();   // Card description
+
+// Get full data
+$data = $status->toArray();
+```
+
+### CardStatus Enum
+
+```php
+use Epoint\Enums\CardStatus;
+
+CardStatus::NEW              // Card registration initiated
+CardStatus::ACTIVE           // Card is active and ready for payments
+CardStatus::PENDING          // Card registration is pending
+CardStatus::REJECTED         // Card registration rejected
+CardStatus::EXPIRED          // Card has expired
+CardStatus::SESSION_EXPIRED  // Registration session has expired
+```
+
+### Complete Example
+
+```php
+use Epoint\Enums\CardStatus;
+
+$cardId = 'ce001234567'; // From card registration callback
+
+$status = $client->checkCardStatus()
+    ->cardId($cardId)
+    ->get();
+
+switch ($status->getCardStatus()) {
+    case CardStatus::ACTIVE:
+        // Card is ready for payments
+        $mask = $status->getCardMask();
+        $name = $status->getCardName();
+        $expiry = $status->getExpiredDate();
+
+        echo "Card {$mask} ({$name}) is active, expires {$expiry}";
+        break;
+
+    case CardStatus::PENDING:
+        echo 'Card registration is still pending';
+        break;
+
+    case CardStatus::REJECTED:
+        echo 'Card registration was rejected';
+        break;
+
+    case CardStatus::EXPIRED:
+        echo 'Card has expired';
+        break;
+
+    case CardStatus::SESSION_EXPIRED:
+        echo 'Registration session expired, please try again';
+        break;
+
+    case CardStatus::NEW:
+        echo 'Card registration initiated but not completed';
+        break;
+}
+```
+
 ## Best Practices
 
 1. **Use Callbacks**: Don't rely solely on status checks. Implement callback handling for real-time notifications.
 
 2. **Store Transaction ID**: Always store the transaction ID in your database when creating a payment.
 
-3. **Idempotency**: Status checks are safe to call multiple times with the same transaction ID.
+3. **Store Card ID**: Always store the card ID from card registration callbacks for future status checks.
 
-4. **Trace ID**: Always log the trace ID when troubleshooting failed status checks.
+4. **Idempotency**: Status checks are safe to call multiple times with the same transaction or card ID.
+
+5. **Trace ID**: Always log the trace ID when troubleshooting failed status checks.
 
 ## See Also
 
 - [Standard Payments](Standard-Payments)
+- [Card Management](Card-Management)
 - [Callback Handling](Callback-Handling)
 - [Response Objects](Response-Objects)
