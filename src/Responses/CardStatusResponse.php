@@ -9,6 +9,15 @@ use Epoint\Enums\CardStatus;
 class CardStatusResponse extends BaseResponse
 {
     /**
+     * Card status API returns "active" for successful registrations,
+     * not "success" like other endpoints.
+     */
+    public function isSuccess(): bool
+    {
+        return $this->getCardStatus() === CardStatus::ACTIVE;
+    }
+
+    /**
      * Get card status
      */
     public function getCardStatus(): ?CardStatus

@@ -91,6 +91,32 @@ class CardStatusResponseTest extends TestCase
         }
     }
 
+    public function test_is_success_returns_true_for_active_status(): void
+    {
+        $response = new CardStatusResponse(['status' => 'active']);
+
+        $this->assertTrue($response->isSuccess());
+        $this->assertFalse($response->isError());
+    }
+
+    public function test_is_success_returns_false_for_non_active_statuses(): void
+    {
+        $nonActiveStatuses = ['new', 'pending', 'rejected', 'expired', 'session_expired'];
+
+        foreach ($nonActiveStatuses as $status) {
+            $response = new CardStatusResponse(['status' => $status]);
+            $this->assertFalse($response->isSuccess(), "isSuccess() should be false for status: {$status}");
+            $this->assertTrue($response->isError(), "isError() should be true for status: {$status}");
+        }
+    }
+
+    public function test_is_success_returns_false_when_status_missing(): void
+    {
+        $response = new CardStatusResponse([]);
+
+        $this->assertFalse($response->isSuccess());
+    }
+
     public function test_full_response_data(): void
     {
         $data = [
