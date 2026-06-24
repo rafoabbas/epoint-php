@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(xargs:*)",
+      "Bash(vendor/bin/phpunit:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(./release.sh:*)",
+      "Bash(./wiki-publish.sh:*)"
+    ]
+  }
+}
