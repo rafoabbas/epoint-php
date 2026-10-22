@@ -15,7 +15,7 @@ Modern PHP SDK for integrating [Epoint.az](https://epoint.az) payment gateway in
 - ✅ **Split Payments** - Split payment between multiple merchants (with saved card & registration)
 - ✅ **Preauth** - Hold funds before capture (authorization + completion)
 - ✅ **Refunds & Reversals** - Full or partial refunds, transaction cancellation
-- ✅ **Apple Pay & Google Pay** - Digital wallet integration
+- ✅ **Apple Pay & Google Pay** - Native token payments on your own page, or the hosted widget
 - ✅ **Wallets** - Support for local e-wallets
 - ✅ **Payment Methods** - Get active payment methods, wallets and installment banks for your own checkout
 - ✅ **Installment Payments** - Pay with a chosen installment bank and month
@@ -33,7 +33,7 @@ For detailed documentation, guides, and advanced usage examples, visit our **[Gi
 - 💳 [Payment Methods](https://github.com/rafoabbas/epoint-php/wiki/Payment-Methods)
 - 🔐 [Security & Signature Verification](https://github.com/rafoabbas/epoint-php/wiki/Security)
 - 🔄 [Refunds & Reversals](https://github.com/rafoabbas/epoint-php/wiki/Refunds-and-Reversals)
-- 📱 [Digital Wallets (Apple Pay, Google Pay)](https://github.com/rafoabbas/epoint-php/wiki/Digital-Wallets)
+- 📱 [Apple Pay & Google Pay](https://github.com/rafoabbas/epoint-php/wiki/Apple-Pay-and-Google-Pay)
 - 🧪 [Testing Guide](https://github.com/rafoabbas/epoint-php/wiki/Testing)
 - ❓ [FAQ & Troubleshooting](https://github.com/rafoabbas/epoint-php/wiki/FAQ)
 
@@ -312,7 +312,36 @@ $completeResponse = $client->preauth()
     ->complete($transaction, 85.00); // Capture partial or full amount
 ```
 
-### Apple Pay / Google Pay
+### Apple Pay / Google Pay (token payment)
+
+Show the official wallet button on your own page and charge the wallet token from your server. Full guide: [Apple Pay & Google Pay](https://github.com/rafoabbas/epoint-php/wiki/Apple-Pay-and-Google-Pay).
+
+```php
+// onvalidatemerchant
+$session = $client->applePaySession()
+    ->origin('https://shop.example.az')
+    ->create();
+// -> ApplePaySession.completeMerchantValidation($session->getSession())
+
+// onpaymentauthorized: create the record, then charge the token
+$tokenPayment = $client->tokenPayment()
+    ->amount(25.50)
+    ->orderId('ORDER-001-1')   // unique per attempt
+    ->description('Order #ORDER-001')
+    ->create();
+
+$result = $client->applePay()  // or ->googlePay()->googleRawToken($rawToken)
+    ->paymentId($tokenPayment->getPaymentId())
+    ->applePaymentData($paymentData)
+    ->billingContact($billingContact)
+    ->pay();
+
+// Declined charges come back as $result->isSuccess() === false, not as exceptions.
+// Always confirm before marking the order paid:
+$status = $client->checkStatus()->orderId('ORDER-001-1')->get();
+```
+
+### Apple Pay / Google Pay (widget)
 
 ```php
 $widget = $client->widget()
@@ -397,6 +426,10 @@ if ($status['status'] === 'ok') {
 | `splitCardRegistrationWithPay()` | Register card with split payment |
 | `preauth()` | Preauth (hold and capture) |
 | `widget()` | Apple Pay / Google Pay widget |
+| `tokenPayment()` | Create a token payment record for Apple Pay / Google Pay |
+| `applePaySession()` | Apple Pay merchant session (`onvalidatemerchant`) |
+| `applePay()` | Charge a token payment with an Apple Pay token |
+| `googlePay()` | Charge a token payment with a Google Pay token |
 | `wallet()` | Wallet operations |
 | `invoice()` | Invoice management |
 | `heartbeat()` | API health check |
@@ -454,6 +487,11 @@ $response->getCardMask()        // Masked card number (e.g., "****1234")
 
 // Widget-specific methods
 $response->getWidgetUrl()       // Apple Pay / Google Pay widget URL
+
+// Token payment methods
+$response->getPaymentId()       // Epoint payment ID (tokenPayment) for applePay()/googlePay()
+$response->getSession()         // Apple Pay merchant session (applePaySession)
+$response->getResult()          // Raw processor result (applePay/googlePay)
 
 // Status check methods
 $response->getPaymentStatus()   // PaymentStatus enum (NEW, SUCCESS, ERROR)

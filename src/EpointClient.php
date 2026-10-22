@@ -8,6 +8,7 @@ use Epoint\Enums\Currency;
 use Epoint\Enums\Language;
 use Epoint\Exceptions\EpointException;
 use Epoint\Exceptions\SignatureVerificationException;
+use Epoint\Requests\ApplePaySessionRequest;
 use Epoint\Requests\CardRegistrationRequest;
 use Epoint\Requests\CardRegistrationWithPayRequest;
 use Epoint\Requests\CardStatusCheckRequest;
@@ -23,6 +24,8 @@ use Epoint\Requests\SplitCardPaymentRequest;
 use Epoint\Requests\SplitCardRegistrationWithPayRequest;
 use Epoint\Requests\SplitPaymentRequest;
 use Epoint\Requests\StatusCheckRequest;
+use Epoint\Requests\TokenPaymentRequest;
+use Epoint\Requests\TokenPayRequest;
 use Epoint\Requests\WalletRequest;
 use Epoint\Requests\WidgetRequest;
 use Epoint\Traits\HasSignature;
@@ -168,6 +171,38 @@ class EpointClient
     }
 
     /**
+     * Create a token payment record (step 1 of a native Apple Pay / Google Pay payment)
+     */
+    public function tokenPayment(): TokenPaymentRequest
+    {
+        return new TokenPaymentRequest($this);
+    }
+
+    /**
+     * Create an Apple Pay merchant session for the given origin (onvalidatemerchant)
+     */
+    public function applePaySession(): ApplePaySessionRequest
+    {
+        return new ApplePaySessionRequest($this);
+    }
+
+    /**
+     * Charge a token payment with an Apple Pay token (onpaymentauthorized)
+     */
+    public function applePay(): TokenPayRequest
+    {
+        return new TokenPayRequest($this, TokenPayRequest::APPLE_PAY_ENDPOINT);
+    }
+
+    /**
+     * Charge a token payment with a Google Pay token
+     */
+    public function googlePay(): TokenPayRequest
+    {
+        return new TokenPayRequest($this, TokenPayRequest::GOOGLE_PAY_ENDPOINT);
+    }
+
+    /**
      * Wallet operations
      */
     public function wallet(): WalletRequest
@@ -269,7 +304,11 @@ class EpointClient
         }
 
         if ($httpCode >= 400) {
-            throw new EpointException("API request to {$endpoint} failed with HTTP {$httpCode}: {$response}");
+            throw new EpointException(
+                "API request to {$endpoint} failed with HTTP {$httpCode}: {$response}",
+                httpCode: $httpCode,
+                responseData: $this->decodeErrorBody($response),
+            );
         }
 
         try {
@@ -322,7 +361,11 @@ class EpointClient
         }
 
         if ($httpCode >= 400) {
-            throw new EpointException("API request to {$endpoint} failed with HTTP {$httpCode}: {$response}");
+            throw new EpointException(
+                "API request to {$endpoint} failed with HTTP {$httpCode}: {$response}",
+                httpCode: $httpCode,
+                responseData: $this->decodeErrorBody($response),
+            );
         }
 
         try {
@@ -331,6 +374,18 @@ class EpointClient
         } catch (\JsonException $e) {
             throw new EpointException("Failed to decode JSON response from {$endpoint}: " . $e->getMessage(), previous: $e);
         }
+    }
+
+    /**
+     * Decode a failed response body so callers can read Epoint's error details
+     *
+     * @return array<string, mixed>|null
+     */
+    private function decodeErrorBody(string $response): ?array
+    {
+        $decoded = json_decode($response, true);
+
+        return is_array($decoded) ? $decoded : null;
     }
 
     public function getPublicKey(): string

@@ -60,7 +60,9 @@ abstract class BaseResponse
      */
     public function getCode(): ?string
     {
-        return $this->data['code'] ?? null;
+        $code = $this->data['code'] ?? null;
+
+        return $code === null ? null : (string) $code;
     }
 
     /**

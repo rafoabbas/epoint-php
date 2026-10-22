@@ -2,6 +2,24 @@
 
 All notable changes to `rafoabbas/epoint-php` will be documented in this file.
 
+## 0.2.6 - 2026-10-22
+
+### Added
+- Native Apple Pay / Google Pay token payments (no iframe):
+  - `tokenPayment()` → `TokenPaymentRequest` (`/token/payment`) and `TokenPaymentResponse` (`getPaymentId()`, `getOrderId()`, `getAmount()`, `getPayment()`)
+  - `applePaySession()` → `ApplePaySessionRequest` (`/token/apple/session`, `origin()`) and `ApplePaySessionResponse` (`getSession()`)
+  - `applePay()` / `googlePay()` → `TokenPayRequest` (`/token/apple/pay`, `/token/google/pay`) with `paymentId()`, `applePaymentData()`, `googleRawToken()`, `token()`, `billingContact()`, and `TokenPayResponse` (`getOrderId()`, `getPaymentId()`, `getRedirectUrl()`, `getResult()`)
+- `TokenPayRequest::pay()` returns declined / already processed charges (HTTP 400 with a JSON body) as an unsuccessful response instead of throwing
+- `EpointException::getHttpCode()` and `EpointException::getResponseData()` for HTTP errors (the constructor stays backwards compatible)
+
+### Fixed
+- `BaseResponse::getCode()` no longer throws a `TypeError` when Epoint returns a numeric `code`
+
+### Documentation
+- New wiki page: Apple Pay & Google Pay (token and widget flows)
+- Updated README, API Reference, Response Objects, Error Handling, Home and sidebar
+- Added `examples/apple-pay-token.php`
+
 ## 0.2.5 - 2026-10-22
 
 ### Added

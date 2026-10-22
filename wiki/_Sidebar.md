@@ -7,6 +7,7 @@
 - [Standard Payments](Standard-Payments)
 - [Payment Status Check](Payment-Status-Check)
 - [Card Management](Card-Management)
+- [Apple Pay & Google Pay](Apple-Pay-and-Google-Pay)
 
 ### Advanced Features
 - [Refunds & Reversals](Refunds-and-Reversals)

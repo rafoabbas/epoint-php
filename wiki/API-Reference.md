@@ -283,6 +283,53 @@ $client->widget()
 
 **Returns:** `WidgetResponse`
 
+### tokenPayment()
+
+Create the payment record a native Apple Pay / Google Pay token is charged against. See [Apple Pay & Google Pay](Apple-Pay-and-Google-Pay).
+
+```php
+$client->tokenPayment()
+    ->amount(float $amount)
+    ->orderId(string $orderId)          // unique per attempt, max 250 chars
+    ->description(string $description)
+    ->currency(Currency $currency)      // default AZN
+    ->language(Language $language)      // default AZ
+    ->successUrl(string $url)
+    ->errorUrl(string $url)
+    ->otherAttributes(array $attributes)
+    ->create()
+```
+
+**Returns:** `TokenPaymentResponse`
+
+### applePaySession()
+
+Create an Apple Pay merchant session (`onvalidatemerchant`).
+
+```php
+$client->applePaySession()
+    ->origin(string $origin)            // e.g. https://shop.example.az
+    ->create()
+```
+
+**Returns:** `ApplePaySessionResponse`
+
+### applePay() / googlePay()
+
+Charge a token payment with a wallet token.
+
+```php
+$client->applePay()                     // or googlePay()
+    ->paymentId(int $paymentId)
+    ->applePaymentData(array $paymentData)   // Apple Pay, or:
+    ->googleRawToken(string $rawToken)       // Google Pay, or:
+    ->token(string $base64Token)             // already encoded
+    ->billingContact(array $billingContact)
+    ->pay()
+```
+
+**Returns:** `TokenPayResponse`. Declined charges (HTTP 400 with JSON) are returned as unsuccessful responses, not exceptions.
+
 ### wallet()
 
 Wallet operations.
@@ -534,7 +581,46 @@ $response->getBankResponse(): ?string
 $response->getWidgetUrl(): ?string
 ```
 
+### TokenPaymentResponse
+
+```php
+$response->getPaymentId(): ?int
+$response->getOrderId(): ?string
+$response->getAmount(): ?float
+$response->getPayment(): ?array
+```
+
+### ApplePaySessionResponse
+
+```php
+$response->getSession(): ?array
+```
+
+### TokenPayResponse
+
+```php
+$response->getOrderId(): ?string
+$response->getPaymentId(): ?int
+$response->getRedirectUrl(): ?string
+$response->getResult(): ?array
+```
+
 ## Exceptions
+
+### EpointException
+
+Thrown on validation, network and HTTP errors. For HTTP errors the status code and the decoded JSON body are available:
+
+```php
+use Epoint\Exceptions\EpointException;
+
+try {
+    $client->tokenPayment()->amount(10)->orderId('ORDER-1')->create();
+} catch (EpointException $e) {
+    $e->getHttpCode();      // e.g. 400, or null
+    $e->getResponseData();  // e.g. ['status' => 'error', 'message' => 'Duplicate order_id value'], or null
+}
+```
 
 ### SignatureVerificationException
 

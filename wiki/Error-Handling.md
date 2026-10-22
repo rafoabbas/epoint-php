@@ -40,6 +40,24 @@ try {
 }
 ```
 
+## HTTP Error Details
+
+When Epoint answers with an HTTP error, `EpointException` carries the status code and the decoded JSON body:
+
+```php
+use Epoint\Exceptions\EpointException;
+
+try {
+    $client->tokenPayment()->amount(10)->orderId('ORDER-123-1')->create();
+} catch (EpointException $e) {
+    $httpCode = $e->getHttpCode();         // null for network / validation errors
+    $body = $e->getResponseData();         // null when the body was not JSON
+    $message = $body['message'] ?? $e->getMessage();
+}
+```
+
+`applePay()->pay()` and `googlePay()->pay()` return declined charges as unsuccessful responses instead of throwing.
+
 ## Common Errors
 
 ### Authentication Errors

@@ -208,6 +208,26 @@ $widget->getWidgetUrl();       // Apple Pay / Google Pay widget URL
 $widget->isSuccess();          // Check if widget created
 ```
 
+## Token Payment Responses
+
+Returned by `tokenPayment()->create()`, `applePaySession()->create()` and `applePay()/googlePay()->pay()`:
+
+```php
+$tokenPayment->getPaymentId();  // Epoint payment ID for applePay()/googlePay()
+$tokenPayment->getOrderId();    // Your order ID
+$tokenPayment->getAmount();     // Stored amount (floored to 2 decimals)
+
+$session->getSession();         // Merchant session for completeMerchantValidation()
+
+$result->isSuccess();           // false for declined / already processed charges
+$result->getCode();             // '000' on success, '400' on errors
+$result->getOrderId();          // Your order ID
+$result->getRedirectUrl();      // Configured redirect URL
+$result->getResult();           // Raw processor result (for logs, without tokens)
+```
+
+See [Apple Pay & Google Pay](Apple-Pay-and-Google-Pay).
+
 ## Using toArray()
 
 Get the complete response data as an associative array:

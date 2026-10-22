@@ -14,6 +14,7 @@ Welcome to the official documentation for the Epoint PHP SDK. This SDK provides 
 - [Card Registration & Management](Card-Management)
 - [Card Registration with Payment](Card-Management#card-registration-with-payment)
 - [Saved Card Payments](Card-Management#payment-with-saved-card)
+- [Apple Pay & Google Pay](Apple-Pay-and-Google-Pay)
 
 ### Advanced Features
 - [Split Payments](Standard-Payments#split-payments)
@@ -37,7 +38,7 @@ Welcome to the official documentation for the Epoint PHP SDK. This SDK provides 
 ✅ **Split Payments** - Split payment between multiple merchants (with saved card & registration support)
 ✅ **Preauth** - Hold funds before capture (authorization + completion)
 ✅ **Refunds & Reversals** - Full or partial refunds, transaction cancellation
-✅ **Apple Pay & Google Pay** - Digital wallet integration
+✅ **Apple Pay & Google Pay** - Native token payments or the hosted widget
 ✅ **Wallets** - Support for local e-wallets
 ✅ **Invoices** - Create and send payment invoices
 ✅ **Signature Verification** - Secure callback validation
