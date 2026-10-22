@@ -46,6 +46,39 @@ $client->payment()
 
 **Returns:** `PaymentResponse`
 
+### paymentMethods()
+
+Get active payment methods, wallets and installment banks of the business. Use it before building your own checkout page.
+
+```php
+$client->paymentMethods()
+    ->language(Language $language = null) // Optional: az, en, ru
+    ->get()
+```
+
+**Returns:** `PaymentMethodsResponse`
+
+### installmentPayment()
+
+Create an installment payment with a specific bank and month (values from `paymentMethods()`).
+
+```php
+$client->installmentPayment()
+    ->amount(float $amount)
+    ->orderId(string $orderId)
+    ->installmentCardId(int $cardId)
+    ->installmentMonth(int $month)
+    ->description(string $description = null)
+    ->language(Language $language = Language::AZ)
+    ->currency(Currency $currency = Currency::AZN)
+    ->successUrl(string $url = null)
+    ->errorUrl(string $url = null)
+    ->otherAttributes(array $attributes = null)
+    ->send()
+```
+
+**Returns:** `PaymentResponse`
+
 ### checkStatus()
 
 Check payment status by transaction ID.
@@ -353,6 +386,22 @@ PaymentStatus::SUCCESS  // Payment successful
 PaymentStatus::ERROR    // Payment failed
 ```
 
+### PaymentMethod
+
+```php
+PaymentMethod::CARD           // 'card'
+PaymentMethod::INSTALLMENT    // 'installment'
+PaymentMethod::WALLET         // 'wallet'
+PaymentMethod::GOOGLE_PAY     // 'google_pay'
+PaymentMethod::APPLE_PAY      // 'apple_pay'
+PaymentMethod::CLICK_TO_PAY   // 'click_to_pay'
+PaymentMethod::AMEX           // 'amex'
+PaymentMethod::PRE_AUTH       // 'pre_auth'
+PaymentMethod::CARD_SAVE      // 'card_save'
+PaymentMethod::PAYOUT         // 'payout'
+PaymentMethod::REVERSE        // 'reverse'
+```
+
 ### CardStatus
 
 ```php
@@ -392,6 +441,17 @@ $response->getBankResponse(): ?string
 $response->getOperationCode(): ?string
 $response->getOtherAttributes(): array
 ```
+
+### PaymentMethodsResponse
+
+- `getBusinessId(): ?int`
+- `getBusinessName(): ?string`
+- `getMethods(): array` - Active method keys
+- `hasMethod(PaymentMethod|string $method): bool`
+- `getWallets(): array` - Active wallets (`id`, `key`, `name`)
+- `getInstallment(): ?array` - `null` when installment is not available
+- `getInstallmentMinAmount(): ?float`
+- `getInstallmentBanks(): array` - Banks (`id`, `name`, `bank`, `image`, `months`)
 
 ### StatusResponse
 

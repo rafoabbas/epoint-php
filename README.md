@@ -17,6 +17,8 @@ Modern PHP SDK for integrating [Epoint.az](https://epoint.az) payment gateway in
 - ✅ **Refunds & Reversals** - Full or partial refunds, transaction cancellation
 - ✅ **Apple Pay & Google Pay** - Digital wallet integration
 - ✅ **Wallets** - Support for local e-wallets
+- ✅ **Payment Methods** - Get active payment methods, wallets and installment banks for your own checkout
+- ✅ **Installment Payments** - Pay with a chosen installment bank and month
 - ✅ **Invoices** - Create and send payment invoices
 - ✅ **Signature Verification** - Secure callback validation
 - ✅ **Type-safe** - Full PHP 8.2+ type coverage with enums
@@ -125,6 +127,37 @@ $response = $client->payment()
     ->description('Monthly subscription')
     ->installment(true) // Enable installment payment
     ->send();
+```
+
+### Active Payment Methods
+
+```php
+use Epoint\Enums\Language;
+use Epoint\Enums\PaymentMethod;
+
+$methods = $client->paymentMethods()
+    ->language(Language::AZ) // Optional: installment card names language
+    ->get();
+
+$methods->getMethods();                         // ['card', 'installment', 'wallet', ...]
+$methods->hasMethod(PaymentMethod::APPLE_PAY);  // true / false
+$methods->getWallets();                         // [['id' => 8, 'key' => 'portmanat', 'name' => 'Portmanat'], ...]
+$methods->getInstallmentMinAmount();            // 30.0 or null
+$methods->getInstallmentBanks();                // [['id' => 2, 'name' => 'TamKart', 'bank' => 'ABB', 'image' => '...', 'months' => [3, 6, 12]], ...]
+```
+
+### Installment Payment
+
+```php
+$response = $client->installmentPayment()
+    ->amount(120.00)
+    ->orderId('ORDER-007')
+    ->description('Order #007')
+    ->installmentCardId(2) // banks[].id from paymentMethods()
+    ->installmentMonth(6)  // one of banks[].months
+    ->send();
+
+header('Location: ' . $response->getRedirectUrl());
 ```
 
 ### Check Payment Status
@@ -340,6 +373,8 @@ if ($status['status'] === 'ok') {
 | Method | Description |
 |--------|-------------|
 | `payment()` | Create standard payment request |
+| `paymentMethods()` | Get active payment methods, wallets and installment banks |
+| `installmentPayment()` | Create installment payment with bank and month |
 | `checkStatus()` | Check payment status |
 | `checkCardStatus()` | Check card registration status |
 | `registerCard()` | Register card without payment |
@@ -446,11 +481,13 @@ try {
 use Epoint\Enums\CardStatus;
 use Epoint\Enums\Currency;
 use Epoint\Enums\Language;
+use Epoint\Enums\PaymentMethod;
 use Epoint\Enums\PaymentStatus;
 
 Currency::AZN
 Language::AZ | Language::EN | Language::RU
 PaymentStatus::NEW | PaymentStatus::SUCCESS | PaymentStatus::ERROR
+PaymentMethod::CARD | PaymentMethod::INSTALLMENT | PaymentMethod::WALLET | PaymentMethod::GOOGLE_PAY | PaymentMethod::APPLE_PAY | ...
 CardStatus::NEW | CardStatus::ACTIVE | CardStatus::PENDING | CardStatus::REJECTED | CardStatus::EXPIRED | CardStatus::SESSION_EXPIRED
 ```
 

@@ -2,6 +2,25 @@
 
 All notable changes to `rafoabbas/epoint-php` will be documented in this file.
 
+## 0.2.4 - 2026-10-22
+
+### Added
+- Active payment methods (`paymentMethods()`) - Get active payment methods, wallets and installment banks via `/payment-methods` endpoint
+- `PaymentMethodsRequest` class with optional `language()` (installment card names are returned in this language)
+- `PaymentMethodsResponse` class with getter methods: `getBusinessId()`, `getBusinessName()`, `getMethods()`, `hasMethod()`, `getWallets()`, `getInstallment()`, `getInstallmentMinAmount()`, `getInstallmentBanks()`
+- `PaymentMethod` enum with values: `CARD`, `INSTALLMENT`, `WALLET`, `GOOGLE_PAY`, `APPLE_PAY`, `CLICK_TO_PAY`, `AMEX`, `PRE_AUTH`, `CARD_SAVE`, `PAYOUT`, `REVERSE`
+- Installment payment (`installmentPayment()`) - Create payment with a specific installment bank and month via `/installment-request` endpoint
+- `InstallmentPaymentRequest` class with `installmentCardId()` and `installmentMonth()` methods
+
+### Documentation
+- Updated README, API Reference, Response Objects and Standard Payments wiki pages
+- Added `examples/payment-methods.php`
+
+## 0.2.3 - 2026-06-19
+
+### Fixed
+- `CardStatusResponse::isSuccess()` now checks for `active` card status
+
 ## 0.2.2 - 2026-06-19
 
 ### Added

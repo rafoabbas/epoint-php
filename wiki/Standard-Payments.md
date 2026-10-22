@@ -110,6 +110,31 @@ $response = $client->payment()
 
 When enabled, customers see installment options on the payment page (e.g., 3, 6, 12 months).
 
+### Installment with Selected Bank and Month
+
+If you build your own checkout, get the active installment banks with `paymentMethods()` and send the customer's choice with `installmentPayment()`:
+
+```php
+use Epoint\Enums\PaymentMethod;
+
+$methods = $client->paymentMethods()->language(Language::AZ)->get();
+
+if ($methods->hasMethod(PaymentMethod::INSTALLMENT)) {
+    foreach ($methods->getInstallmentBanks() as $bank) {
+        // Show $bank['name'], $bank['bank'], $bank['image'] and $bank['months']
+    }
+}
+
+$response = $client->installmentPayment()
+    ->amount(120.00)                  // Must be >= getInstallmentMinAmount()
+    ->orderId('ORDER-12347')
+    ->installmentCardId(2)            // banks[].id
+    ->installmentMonth(6)             // one of banks[].months
+    ->send();
+
+header('Location: ' . $response->getRedirectUrl());
+```
+
 ## Multi-Language Support
 
 ```php

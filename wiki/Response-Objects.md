@@ -40,6 +40,32 @@ $response->getOtherAttributes(); // Additional attributes array
 $data = $response->toArray();
 ```
 
+## Payment Methods Response
+
+Returned by `paymentMethods()`:
+
+```php
+$methods = $client->paymentMethods()->language(Language::AZ)->get();
+
+// Business
+$methods->getBusinessId();            // 14806
+$methods->getBusinessName();          // Business page name
+
+// Methods
+$methods->getMethods();               // ['card', 'installment', 'wallet', 'google_pay', ...]
+$methods->hasMethod(PaymentMethod::INSTALLMENT); // true / false
+
+// Wallets (empty array when no active wallet)
+$methods->getWallets();               // [['id' => 8, 'key' => 'portmanat', 'name' => 'Portmanat'], ...]
+
+// Installment (null / empty when installment is disabled)
+$methods->getInstallment();           // ['min_amount' => 30, 'banks' => [...]] or null
+$methods->getInstallmentMinAmount();  // 30.0
+$methods->getInstallmentBanks();      // [['id' => 2, 'name' => 'TamKart', 'bank' => 'ABB', 'image' => '...', 'months' => [3, 6, 12]], ...]
+```
+
+> Google Pay and Apple Pay may be active for the business, but your checkout should still check that the customer's device and browser support them.
+
 ## Status Response
 
 Returned by `checkStatus()`:

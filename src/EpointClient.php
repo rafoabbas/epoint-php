@@ -11,7 +11,9 @@ use Epoint\Exceptions\SignatureVerificationException;
 use Epoint\Requests\CardRegistrationRequest;
 use Epoint\Requests\CardRegistrationWithPayRequest;
 use Epoint\Requests\CardStatusCheckRequest;
+use Epoint\Requests\InstallmentPaymentRequest;
 use Epoint\Requests\InvoiceRequest;
+use Epoint\Requests\PaymentMethodsRequest;
 use Epoint\Requests\PaymentRequest;
 use Epoint\Requests\PreauthRequest;
 use Epoint\Requests\RefundRequest;
@@ -51,6 +53,22 @@ class EpointClient
     public function payment(): PaymentRequest
     {
         return new PaymentRequest($this);
+    }
+
+    /**
+     * Create installment payment request
+     */
+    public function installmentPayment(): InstallmentPaymentRequest
+    {
+        return new InstallmentPaymentRequest($this);
+    }
+
+    /**
+     * Get active payment methods, wallets and installment options
+     */
+    public function paymentMethods(): PaymentMethodsRequest
+    {
+        return new PaymentMethodsRequest($this);
     }
 
     /**
