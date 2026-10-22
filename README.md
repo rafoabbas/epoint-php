@@ -172,6 +172,16 @@ if ($status->getPaymentStatus() === \Epoint\Enums\PaymentStatus::SUCCESS) {
 }
 ```
 
+Or by your own order ID — e.g. for widget (Apple Pay / Google Pay) payments, which return no transaction ID:
+
+```php
+$status = $client->checkStatus()
+    ->orderId('ORDER-001')
+    ->get();
+
+$status->getTransaction(); // Epoint transaction ID of the latest payment for this order
+```
+
 ### Check Card Registration Status
 
 ```php

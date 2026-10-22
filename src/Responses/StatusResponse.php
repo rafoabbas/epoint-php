@@ -29,6 +29,14 @@ class StatusResponse extends BaseResponse
     }
 
     /**
+     * Get your order ID
+     */
+    public function getOrderId(): ?string
+    {
+        return isset($this->data['order_id']) ? (string) $this->data['order_id'] : null;
+    }
+
+    /**
      * Get bank transaction
      */
     public function getBankTransaction(): ?string

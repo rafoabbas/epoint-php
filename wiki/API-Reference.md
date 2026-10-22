@@ -81,11 +81,15 @@ $client->installmentPayment()
 
 ### checkStatus()
 
-Check payment status by transaction ID.
+Check payment status by transaction ID or by your order ID (one of them is required).
 
 ```php
 $client->checkStatus()
     ->transaction(string $transactionId)
+    ->get()
+
+$client->checkStatus()
+    ->orderId(string $orderId)
     ->get()
 ```
 

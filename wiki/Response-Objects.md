@@ -72,6 +72,7 @@ Returned by `checkStatus()`:
 
 ```php
 $status = $client->checkStatus()->transaction('te001234567')->get();
+// or by your order ID: $client->checkStatus()->orderId('ORDER-001')->get();
 
 // Get payment status
 $status->getPaymentStatus();   // PaymentStatus enum (NEW, SUCCESS, ERROR)

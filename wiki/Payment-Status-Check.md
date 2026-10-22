@@ -16,6 +16,26 @@ if ($status->getPaymentStatus() === \Epoint\Enums\PaymentStatus::SUCCESS) {
 }
 ```
 
+## Payment Status by Order ID
+
+Look the payment up by the `order_id` you sent when creating it. This is the way to check widget (Apple Pay / Google Pay) payments, because `/token/widget` does not return a transaction ID.
+
+```php
+$status = $client->checkStatus()
+    ->orderId('ORDER-001')
+    ->get();
+
+if ($status->isSuccess() && $status->getAmount() === $expectedAmount) {
+    // Paid - store the real transaction ID
+    $transactionId = $status->getTransaction();
+}
+```
+
+Notes:
+- Epoint returns the **latest** payment for that order ID.
+- If both `transaction()` and `orderId()` are set, Epoint uses the transaction ID.
+- When no payment is found, Epoint answers with `status: server_error` and `message: record not found`, so `isSuccess()` is `false`.
+
 ## Status Response Methods
 
 ```php

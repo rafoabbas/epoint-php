@@ -36,12 +36,56 @@ class StatusCheckRequestTest extends TestCase
         $this->assertInstanceOf(StatusCheckRequest::class, $request);
     }
 
-    public function test_throws_exception_when_transaction_is_missing(): void
+    public function test_throws_exception_when_transaction_and_order_id_are_missing(): void
     {
         $this->expectException(EpointException::class);
-        $this->expectExceptionMessage('Transaction ID is required');
+        $this->expectExceptionMessage('Transaction ID or order ID is required');
 
         $this->client->checkStatus()->get();
+    }
+
+    public function test_can_check_payment_status_by_order_id(): void
+    {
+        $mockClient = Mockery::mock(EpointClient::class);
+        $mockClient->shouldReceive('getPublicKey')->andReturn('i000000001');
+        $mockClient->shouldReceive('post')
+            ->once()
+            ->with('/get-status', Mockery::on(function ($data) {
+                return ($data['order_id'] ?? null) === 'ord_123'
+                    && ! isset($data['transaction'])
+                    && $data['public_key'] === 'i000000001';
+            }))
+            ->andReturn([
+                'status' => 'success',
+                'transaction' => 'te001234567',
+                'order_id' => 'ord_123',
+                'amount' => 25.5,
+            ]);
+
+        $request = new StatusCheckRequest($mockClient);
+        $response = $request->orderId('ord_123')->get();
+
+        $this->assertTrue($response->isSuccess());
+        $this->assertSame('te001234567', $response->getTransaction());
+        $this->assertSame('ord_123', $response->getOrderId());
+        $this->assertSame(25.5, $response->getAmount());
+    }
+
+    public function test_sends_both_identifiers_when_both_are_set(): void
+    {
+        $mockClient = Mockery::mock(EpointClient::class);
+        $mockClient->shouldReceive('getPublicKey')->andReturn('i000000001');
+        $mockClient->shouldReceive('post')
+            ->once()
+            ->with('/get-status', Mockery::on(function ($data) {
+                return $data['transaction'] === 'te001234567' && $data['order_id'] === 'ord_123';
+            }))
+            ->andReturn(['status' => 'success']);
+
+        $request = new StatusCheckRequest($mockClient);
+        $request->transaction('te001234567')->orderId('ord_123')->get();
+
+        $this->addToAssertionCount(1);
     }
 
     public function test_can_check_payment_status(): void

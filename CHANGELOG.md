@@ -2,6 +2,18 @@
 
 All notable changes to `rafoabbas/epoint-php` will be documented in this file.
 
+## 0.2.5 - 2026-10-22
+
+### Added
+- `StatusCheckRequest::orderId()` - Check payment status by your own order ID (`order_id`) instead of the Epoint transaction ID. Needed for widget (Apple Pay / Google Pay) payments, where `/token/widget` returns no transaction ID. `transaction()` keeps working as before; when both are set, Epoint uses the transaction ID.
+- `StatusResponse::getOrderId()` (it was documented but missing)
+
+### Changed
+- `checkStatus()->get()` without an identifier now throws `Transaction ID or order ID is required` (was `Transaction ID is required`)
+
+### Documentation
+- Updated README, Payment Status Check, API Reference and Response Objects wiki pages
+
 ## 0.2.4 - 2026-10-22
 
 ### Added
