@@ -72,6 +72,23 @@ $client = new EpointClient(
 );
 ```
 
+#### Base URL and timeouts
+
+All options are optional and default to production:
+
+```php
+$client = new EpointClient(
+    publicKey: 'i000000001',
+    privateKey: 'your-private-key',
+    baseUrl: 'https://epoint.az/api/1', // EpointClient::DEFAULT_BASE_URL; point it at a test environment if you have one
+    timeout: 30,                       // total request timeout in seconds
+    connectTimeout: 10,                // connection timeout in seconds
+);
+
+// A copy with a shorter budget, e.g. for Apple Pay's ~30 s onpaymentauthorized window
+$applePayClient = $client->withTimeout(20);
+```
+
 ### 2. Create Payment
 
 ```php
@@ -411,6 +428,7 @@ if ($status['status'] === 'ok') {
 
 | Method | Description |
 |--------|-------------|
+| `withTimeout(int $timeout, ?int $connectTimeout = null)` | Copy of the client with different timeouts |
 | `payment()` | Create standard payment request |
 | `paymentMethods()` | Get active payment methods, wallets and installment banks |
 | `installmentPayment()` | Create installment payment with bank and month |

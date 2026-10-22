@@ -2,6 +2,17 @@
 
 All notable changes to `rafoabbas/epoint-php` will be documented in this file.
 
+## 0.2.7 - 2026-10-22
+
+### Added
+- `EpointClient` constructor options `baseUrl`, `timeout` and `connectTimeout` (all optional; defaults are production, 30 s and 10 s, so existing code is unchanged)
+- `EpointClient::withTimeout()` returns a copy of the client with a different timeout budget
+- `getBaseUrl()`, `getTimeout()`, `getConnectTimeout()` and the `DEFAULT_BASE_URL`, `DEFAULT_TIMEOUT`, `DEFAULT_CONNECT_TIMEOUT` constants
+- cURL connection timeout (`CURLOPT_CONNECTTIMEOUT`) is now set; previously only the total timeout was
+
+### Documentation
+- README, Installation & Setup and API Reference describe the new options
+
 ## 0.2.6 - 2026-10-22
 
 ### Added

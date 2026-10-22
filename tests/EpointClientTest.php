@@ -58,6 +58,71 @@ class EpointClientTest extends TestCase
         $this->assertEquals('test-private-key', $this->client->getPrivateKey());
     }
 
+    public function test_uses_production_defaults(): void
+    {
+        $this->assertSame('https://epoint.az/api/1', $this->client->getBaseUrl());
+        $this->assertSame(30, $this->client->getTimeout());
+        $this->assertSame(10, $this->client->getConnectTimeout());
+    }
+
+    public function test_accepts_custom_base_url_and_timeouts(): void
+    {
+        $client = new EpointClient(
+            publicKey: 'i000000001',
+            privateKey: 'test-private-key',
+            baseUrl: 'https://epoint-v1.test/api/1/',
+            timeout: 15,
+            connectTimeout: 3,
+        );
+
+        $this->assertSame('https://epoint-v1.test/api/1', $client->getBaseUrl());
+        $this->assertSame(15, $client->getTimeout());
+        $this->assertSame(3, $client->getConnectTimeout());
+    }
+
+    public function test_requests_go_to_the_configured_base_url(): void
+    {
+        $client = new EpointClient('i000000001', 'test-private-key', baseUrl: 'http://127.0.0.1:1/api/1', timeout: 2, connectTimeout: 1);
+
+        try {
+            $client->post('/get-status', ['order_id' => 'ORD-1']);
+            $this->fail('Expected the request to fail');
+        } catch (EpointException $e) {
+            $this->assertStringContainsString('API request to /get-status failed', $e->getMessage());
+            $this->assertNull($e->getHttpCode());
+        }
+    }
+
+    public function test_with_timeout_returns_a_copy(): void
+    {
+        $short = $this->client->withTimeout(8);
+
+        $this->assertNotSame($this->client, $short);
+        $this->assertSame(8, $short->getTimeout());
+        $this->assertSame(8, $short->getConnectTimeout());
+        $this->assertSame(30, $this->client->getTimeout());
+        $this->assertSame(10, $this->client->getConnectTimeout());
+
+        $custom = $this->client->withTimeout(20, 2);
+        $this->assertSame(20, $custom->getTimeout());
+        $this->assertSame(2, $custom->getConnectTimeout());
+    }
+
+    public function test_rejects_non_positive_timeouts(): void
+    {
+        $this->expectException(EpointException::class);
+        $this->expectExceptionMessage('Timeouts must be at least 1 second');
+
+        new EpointClient('i000000001', 'test-private-key', timeout: 0);
+    }
+
+    public function test_with_timeout_rejects_non_positive_timeouts(): void
+    {
+        $this->expectException(EpointException::class);
+
+        $this->client->withTimeout(10, 0);
+    }
+
     public function test_payment_returns_payment_request(): void
     {
         $request = $this->client->payment();

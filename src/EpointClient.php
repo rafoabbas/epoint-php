@@ -34,20 +34,51 @@ class EpointClient
 {
     use HasSignature;
 
-    private const BASE_URL = 'https://epoint.az/api/1';
-    private const TIMEOUT = 30;
+    public const DEFAULT_BASE_URL = 'https://epoint.az/api/1';
+    public const DEFAULT_TIMEOUT = 30;
+    public const DEFAULT_CONNECT_TIMEOUT = 10;
+
+    private readonly string $baseUrl;
 
     /**
      * @param  string  $publicKey  Merchant public key (e.g., i000000001)
      * @param  string  $privateKey  Merchant private key for signature generation
+     * @param  string  $baseUrl  API base URL including the version path (override for test environments)
+     * @param  int  $timeout  Total request timeout in seconds
+     * @param  int  $connectTimeout  Connection timeout in seconds
      */
     public function __construct(
         private readonly string $publicKey,
-        private readonly string $privateKey
+        private readonly string $privateKey,
+        string $baseUrl = self::DEFAULT_BASE_URL,
+        private int $timeout = self::DEFAULT_TIMEOUT,
+        private int $connectTimeout = self::DEFAULT_CONNECT_TIMEOUT,
     ) {
         if (!extension_loaded('curl')) {
             throw new EpointException('cURL extension is required');
         }
+
+        if ($timeout < 1 || $connectTimeout < 1) {
+            throw new EpointException('Timeouts must be at least 1 second');
+        }
+
+        $this->baseUrl = rtrim($baseUrl, '/');
+    }
+
+    /**
+     * Return a copy of the client that uses different timeouts (e.g. a short budget for Apple Pay)
+     */
+    public function withTimeout(int $timeout, ?int $connectTimeout = null): static
+    {
+        if ($timeout < 1 || ($connectTimeout !== null && $connectTimeout < 1)) {
+            throw new EpointException('Timeouts must be at least 1 second');
+        }
+
+        $client = clone $this;
+        $client->timeout = $timeout;
+        $client->connectTimeout = $connectTimeout ?? min($client->connectTimeout, $timeout);
+
+        return $client;
     }
 
     /**
@@ -274,7 +305,7 @@ class EpointClient
             'signature' => $signature,
         ]);
 
-        $url = self::BASE_URL . $endpoint;
+        $url = $this->baseUrl . $endpoint;
 
         $ch = curl_init($url);
         if ($ch === false) {
@@ -285,7 +316,8 @@ class EpointClient
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $formData,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => self::TIMEOUT,
+            CURLOPT_TIMEOUT => $this->timeout,
+            CURLOPT_CONNECTTIMEOUT => $this->connectTimeout,
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_HTTPHEADER => [
@@ -330,7 +362,7 @@ class EpointClient
      */
     public function get(string $endpoint, array $query = []): array
     {
-        $url = self::BASE_URL . $endpoint;
+        $url = $this->baseUrl . $endpoint;
 
         if (!empty($query)) {
             $url .= '?' . http_build_query($query);
@@ -343,7 +375,8 @@ class EpointClient
 
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => self::TIMEOUT,
+            CURLOPT_TIMEOUT => $this->timeout,
+            CURLOPT_CONNECTTIMEOUT => $this->connectTimeout,
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_HTTPHEADER => [
@@ -396,5 +429,20 @@ class EpointClient
     public function getPrivateKey(): string
     {
         return $this->privateKey;
+    }
+
+    public function getBaseUrl(): string
+    {
+        return $this->baseUrl;
+    }
+
+    public function getTimeout(): int
+    {
+        return $this->timeout;
+    }
+
+    public function getConnectTimeout(): int
+    {
+        return $this->connectTimeout;
     }
 }

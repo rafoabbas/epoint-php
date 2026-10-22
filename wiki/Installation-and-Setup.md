@@ -64,6 +64,24 @@ EPOINT_PRIVATE_KEY=your-actual-private-key
 .env.local
 ```
 
+## Base URL and Timeouts
+
+
+All options are optional and default to production:
+
+```php
+$client = new EpointClient(
+    publicKey: 'i000000001',
+    privateKey: 'your-private-key',
+    baseUrl: 'https://epoint.az/api/1', // EpointClient::DEFAULT_BASE_URL; point it at a test environment if you have one
+    timeout: 30,                       // total request timeout in seconds
+    connectTimeout: 10,                // connection timeout in seconds
+);
+
+// A copy with a shorter budget, e.g. for Apple Pay's ~30 s onpaymentauthorized window
+$applePayClient = $client->withTimeout(20);
+```
+
 ## Verify Installation
 
 Test that everything is working:
@@ -156,5 +174,6 @@ sudo apt-get install php8.2-json php8.2-curl
 $status = $client->heartbeat();
 print_r($status);
 
-// Check if you're using correct test/production mode
+// Check the base URL and timeouts the client uses
+echo $client->getBaseUrl(), ' ', $client->getTimeout(), "s\n";
 ```

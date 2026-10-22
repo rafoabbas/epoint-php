@@ -9,13 +9,23 @@ Complete reference for all SDK methods.
 ```php
 new EpointClient(
     string $publicKey,
-    string $privateKey
+    string $privateKey,
+    string $baseUrl = EpointClient::DEFAULT_BASE_URL, // https://epoint.az/api/1
+    int $timeout = 30,
+    int $connectTimeout = 10
 )
 ```
 
 **Parameters:**
 - `publicKey` - Your merchant public key (e.g., `i000000001`)
 - `privateKey` - Your merchant private key
+- `baseUrl` - API base URL including `/api/1` (trailing slash is trimmed)
+- `timeout` - Total request timeout in seconds (at least 1)
+- `connectTimeout` - Connection timeout in seconds (at least 1)
+
+**Other client methods:**
+- `withTimeout(int $timeout, ?int $connectTimeout = null): static` - returns a copy with different timeouts; the connection timeout defaults to the smaller of the current one and `$timeout`
+- `getBaseUrl()`, `getTimeout()`, `getConnectTimeout()`
 
 **Example:**
 ```php
