@@ -2,6 +2,12 @@
 
 All notable changes to `rafoabbas/epoint-php` will be documented in this file.
 
+## 0.2.8 - 2026-10-23
+
+### Added
+- `PaymentMethodsRequest::withWalletConfig()` sends `"tokenize": "parameters"`, so `/payment-methods` also returns the Google Pay / Apple Pay button parameters
+- `PaymentMethodsResponse::getGooglePayConfig()` and `getApplePayConfig()` (null when not requested or the method is inactive)
+
 ## 0.2.7 - 2026-10-22
 
 ### Added

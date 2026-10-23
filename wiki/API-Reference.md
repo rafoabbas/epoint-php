@@ -63,6 +63,7 @@ Get active payment methods, wallets and installment banks of the business. Use i
 ```php
 $client->paymentMethods()
     ->language(Language $language = null) // Optional: az, en, ru
+    ->withWalletConfig(bool $include = true) // Optional: adds Google Pay / Apple Pay button parameters ("tokenize": "parameters")
     ->get()
 ```
 
@@ -513,6 +514,8 @@ $response->getOtherAttributes(): array
 - `getInstallment(): ?array` - `null` when installment is not available
 - `getInstallmentMinAmount(): ?float`
 - `getInstallmentBanks(): array` - Banks (`id`, `name`, `bank`, `image`, `months`)
+- `getGooglePayConfig(): ?array` - Google Pay button parameters (`environment`, `merchant_id`, `gateway`, `gateway_merchant_id`, `allowed_auth_methods`, `allowed_card_networks`); only with `withWalletConfig()`
+- `getApplePayConfig(): ?array` - Apple Pay button parameters (`merchant_id`, `supported_networks`, `merchant_capabilities`); only with `withWalletConfig()`
 
 ### StatusResponse
 

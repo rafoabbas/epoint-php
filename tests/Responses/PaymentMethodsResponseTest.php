@@ -96,4 +96,41 @@ class PaymentMethodsResponseTest extends TestCase
         $this->assertNull($response->getBusinessId());
         $this->assertEmpty($response->getMethods());
     }
+
+    public function test_returns_wallet_button_parameters(): void
+    {
+        $response = new PaymentMethodsResponse([
+            'status' => 'success',
+            'result' => [
+                'methods' => ['card', 'google_pay', 'apple_pay'],
+                'google_pay' => [
+                    'environment' => 'PRODUCTION',
+                    'merchant_id' => 'BCR2DN4TY3DITOZH',
+                    'gateway' => 'cybersource',
+                    'gateway_merchant_id' => 'epointpayment_txn001',
+                    'allowed_auth_methods' => ['CRYPTOGRAM_3DS', 'PAN_ONLY'],
+                    'allowed_card_networks' => ['MASTERCARD', 'VISA'],
+                ],
+                'apple_pay' => [
+                    'merchant_id' => 'merchant.az.epoint.applepay',
+                    'supported_networks' => ['visa', 'masterCard', 'amex', 'discover'],
+                    'merchant_capabilities' => ['supports3DS'],
+                ],
+            ],
+        ]);
+
+        $this->assertEquals('epointpayment_txn001', $response->getGooglePayConfig()['gateway_merchant_id']);
+        $this->assertEquals('merchant.az.epoint.applepay', $response->getApplePayConfig()['merchant_id']);
+    }
+
+    public function test_wallet_button_parameters_are_null_when_missing(): void
+    {
+        $response = new PaymentMethodsResponse([
+            'status' => 'success',
+            'result' => ['methods' => ['card'], 'google_pay' => null],
+        ]);
+
+        $this->assertNull($response->getGooglePayConfig());
+        $this->assertNull($response->getApplePayConfig());
+    }
 }

@@ -73,4 +73,37 @@ class PaymentMethodsRequestTest extends TestCase
 
         $this->assertTrue($response->isSuccess());
     }
+
+    public function test_wallet_config_sends_tokenize_parameters(): void
+    {
+        $mockClient = Mockery::mock(EpointClient::class);
+        $mockClient->shouldReceive('getPublicKey')->andReturn('i000000001');
+        $mockClient->shouldReceive('post')
+            ->once()
+            ->with('/payment-methods', Mockery::on(function ($data) {
+                return $data['tokenize'] === 'parameters';
+            }))
+            ->andReturn(['status' => 'success', 'result' => []]);
+
+        $response = (new PaymentMethodsRequest($mockClient))->withWalletConfig()->get();
+
+        $this->assertTrue($response->isSuccess());
+    }
+
+    public function test_wallet_config_is_not_sent_by_default_or_when_disabled(): void
+    {
+        $mockClient = Mockery::mock(EpointClient::class);
+        $mockClient->shouldReceive('getPublicKey')->andReturn('i000000001');
+        $mockClient->shouldReceive('post')
+            ->twice()
+            ->with('/payment-methods', Mockery::on(function ($data) {
+                return ! isset($data['tokenize']);
+            }))
+            ->andReturn(['status' => 'success', 'result' => []]);
+
+        (new PaymentMethodsRequest($mockClient))->get();
+        (new PaymentMethodsRequest($mockClient))->withWalletConfig()->withWalletConfig(false)->get();
+
+        $this->addToAssertionCount(1);
+    }
 }

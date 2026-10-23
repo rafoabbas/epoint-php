@@ -83,4 +83,28 @@ class PaymentMethodsResponse extends BaseResponse
     {
         return $this->getInstallment()['banks'] ?? [];
     }
+
+    /**
+     * Google Pay button parameters; null unless requested with withWalletConfig() and Google Pay is active
+     *
+     * @return array{environment: string, merchant_id: string, gateway: string, gateway_merchant_id: string, allowed_auth_methods: array<int, string>, allowed_card_networks: array<int, string>}|null
+     */
+    public function getGooglePayConfig(): ?array
+    {
+        $config = $this->data['result']['google_pay'] ?? null;
+
+        return is_array($config) ? $config : null;
+    }
+
+    /**
+     * Apple Pay button parameters; null unless requested with withWalletConfig() and Apple Pay is active
+     *
+     * @return array{merchant_id: string, supported_networks: array<int, string>, merchant_capabilities: array<int, string>}|null
+     */
+    public function getApplePayConfig(): ?array
+    {
+        $config = $this->data['result']['apple_pay'] ?? null;
+
+        return is_array($config) ? $config : null;
+    }
 }

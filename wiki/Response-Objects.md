@@ -62,6 +62,10 @@ $methods->getWallets();               // [['id' => 8, 'key' => 'portmanat', 'nam
 $methods->getInstallment();           // ['min_amount' => 30, 'banks' => [...]] or null
 $methods->getInstallmentMinAmount();  // 30.0
 $methods->getInstallmentBanks();      // [['id' => 2, 'name' => 'TamKart', 'bank' => 'ABB', 'image' => '...', 'months' => [3, 6, 12]], ...]
+
+// Wallet button parameters (only with ->withWalletConfig(), null when the method is inactive)
+$methods->getGooglePayConfig();       // ['environment' => 'PRODUCTION', 'merchant_id' => '...', 'gateway_merchant_id' => '...', ...]
+$methods->getApplePayConfig();        // ['merchant_id' => 'merchant.az.epoint.applepay', 'supported_networks' => [...], ...]
 ```
 
 > Google Pay and Apple Pay may be active for the business, but your checkout should still check that the customer's device and browser support them.

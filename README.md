@@ -161,6 +161,12 @@ $methods->hasMethod(PaymentMethod::APPLE_PAY);  // true / false
 $methods->getWallets();                         // [['id' => 8, 'key' => 'portmanat', 'name' => 'Portmanat'], ...]
 $methods->getInstallmentMinAmount();            // 30.0 or null
 $methods->getInstallmentBanks();                // [['id' => 2, 'name' => 'TamKart', 'bank' => 'ABB', 'image' => '...', 'months' => [3, 6, 12]], ...]
+
+// Google Pay / Apple Pay button parameters (sends "tokenize": "parameters")
+$wallets = $client->paymentMethods()->withWalletConfig()->get();
+
+$wallets->getGooglePayConfig(); // ['environment' => 'PRODUCTION', 'merchant_id' => '...', 'gateway' => 'cybersource', 'gateway_merchant_id' => '...', 'allowed_auth_methods' => [...], 'allowed_card_networks' => [...]] or null
+$wallets->getApplePayConfig();  // ['merchant_id' => 'merchant.az.epoint.applepay', 'supported_networks' => [...], 'merchant_capabilities' => [...]] or null
 ```
 
 ### Installment Payment
